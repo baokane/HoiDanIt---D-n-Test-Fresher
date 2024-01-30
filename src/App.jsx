@@ -10,6 +10,7 @@ import BookPage from './pages/book';
 import Footer from './component/Footer';
 import Header from './component/Header';
 import Home from './component/Home';
+import RegisterPage from './pages/register';
 // xoa het test redux
 
 const Layout = () => {
@@ -45,6 +46,10 @@ export default function App() {
     {
       path: "/login",
       element: <LoginPage />,
+    },
+    {
+      path: "/register",
+      element: <RegisterPage />,
     },
   ]);
 
