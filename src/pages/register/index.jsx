@@ -1,28 +1,55 @@
-import { Button, Checkbox, Divider, Form, Input } from 'antd';
+import { Button, Divider, Form, Input, Space, message, notification } from 'antd';
+import { postRegister } from '../../services/api';
+import { useNavigate } from 'react-router-dom';
+import { LoadingOutlined } from '@ant-design/icons';
+import { useState } from 'react';
 // import React from 'react';
 // import './index.css';
 
 const RegisterPage = () => {
-    const onFinish = (values) => {
-        console.log('Success:', values);
+    const nagivate = useNavigate()
+
+    const [isSubmit, setIsSubmit] = useState(false)
+
+    const onFinish = async (values) => {
+        setIsSubmit(false)
+        const res = await postRegister(values.fullname, values.email, values.password, values.phone)
+        console.log('res:', res)
+        setIsSubmit(true)
+        if (res && res.statusCode === 201) {
+            message.success('Đăng kí tài khoản thành công');
+            setTimeout(() => {
+                setIsSubmit(false)
+            }, 1500)
+            nagivate('/login')
+        }
+        if (res && res.statusCode === 400) {
+            notification.error({
+                placement: 'topRight',
+                message: 'Đăng kí tài khoản thất bại',
+            });
+            description
+            setTimeout(() => {
+                setIsSubmit(false)
+            }, 1500)
+        }
     };
 
-    const onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
-    };
+    // const onFinishFailed = (errorInfo) => {
+    //     console.log('Failed:', errorInfo);
+    // };
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            <h2 style={{ marginTop: '50px' }}>Đăng kí người dùng mới</h2>
+            <h1 style={{ marginTop: '50px' }}>Đăng kí người dùng mới</h1>
             <Divider />
             <Form
                 name="basic"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
-                // style={{ maxWidth: 600 }}
                 initialValues={{ remember: true }}
                 onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
+                // onFinishFailed={onFinishFailed}
                 autoComplete="off"
             >
                 <Form.Item
@@ -58,8 +85,8 @@ const RegisterPage = () => {
                 </Form.Item>
 
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                    <Button type="primary" htmlType="submit">
-                        Submit
+                    <Button type="primary" htmlType="submit" loading={isSubmit}>
+                        Loading
                     </Button>
                 </Form.Item>
             </Form>
