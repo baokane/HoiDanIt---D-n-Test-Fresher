@@ -26,9 +26,9 @@ const RegisterPage = () => {
         if (res && res.statusCode === 400) {
             notification.error({
                 placement: 'topRight',
-                message: 'Đăng kí tài khoản thất bại',
+                message: 'Có lỗi xảy ra',
+                description: res.message && Array.isArray(res.message) ? res.message[0] : res.message
             });
-            description
             setTimeout(() => {
                 setIsSubmit(false)
             }, 1500)
