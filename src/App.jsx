@@ -18,6 +18,7 @@ import NotFound from './component/NotFound';
 import Loading from './component/Loading'
 import AdminPage from './pages/admin';
 import ProtectedRoute from './component/ProtectedRoute';
+import LayoutAdmin from './component/LayoutAdmin';
 // xoa het test redux
 
 const Layout = () => {
@@ -30,20 +31,20 @@ const Layout = () => {
   )
 }
 
-const LayoutAdmin = () => {
-  const isAdminRoute = window.location.pathname.startsWith('/admin')
-  const user = useSelector(state => state.account.user)
-  const userRole = user.role
-  return (
-    <div className='layout-app'>
-      {isAdminRoute && userRole === 'ADMIN' && <Header />}
-      {/* <Header /> */}
-      <Outlet />
-      {/* <Footer /> */}
-      {isAdminRoute && userRole === 'ADMIN' && <Footer />}
-    </div>
-  )
-}
+// const LayoutAdmin = () => {
+//   const isAdminRoute = window.location.pathname.startsWith('/admin')
+//   const user = useSelector(state => state.account.user)
+//   const userRole = user.role
+//   return (
+//     <div className='layout-app'>
+//       {isAdminRoute && userRole === 'ADMIN' && <Header />}
+//       {/* <Header /> */}
+//       <Outlet />
+//       {/* <Footer /> */}
+//       {isAdminRoute && userRole === 'ADMIN' && <Footer />}
+//     </div>
+//   )
+// }
 
 export default function App() {
   const dipatch = useDispatch()
