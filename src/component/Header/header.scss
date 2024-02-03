@@ -4,6 +4,10 @@
     align-items: center;
 }
 
+.header_drawer {
+    display: none;
+}
+
 .header-left {
     display: flex;
     justify-content: center;
@@ -69,7 +73,7 @@
 
         .header-right_text {
             cursor: pointer;
-            font-size: 18px;
+            font-size: 16px;
             color: #a7a3a3;
         }
     }

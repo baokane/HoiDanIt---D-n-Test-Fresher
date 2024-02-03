@@ -19,6 +19,7 @@ import Loading from './component/Loading'
 import AdminPage from './pages/admin';
 import ProtectedRoute from './component/ProtectedRoute';
 import LayoutAdmin from './component/LayoutAdmin';
+import DashBoard from './component/Dashboard'
 // xoa het test redux
 
 const Layout = () => {
@@ -86,19 +87,23 @@ export default function App() {
 
     {
       path: "/admin",
-      element: <LayoutAdmin />,
+      element:
+        <ProtectedRoute>
+          <LayoutAdmin />
+        </ProtectedRoute>
+      ,
       errorElement: <NotFound />,
 
       children: [
         {
           index: true, element:
             <ProtectedRoute>
-              <AdminPage />
+              <DashBoard />
             </ProtectedRoute>
         },
         {
-          path: "user",
-          element: <ContactPage />,
+          path: "dashboard",
+          element: <DashBoard />,
         },
         {
           path: "book",

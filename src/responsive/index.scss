@@ -1,8 +1,71 @@
 // Mobie
-@media (max-width: 739px) {}
+@media (max-width: 739px) {
+    .drawer_block {
+        .ant-drawer-content-wrapper {
+            width: 250px;
+
+        }
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+
+        .header_drawer {
+            display: block;
+
+            .drawer_icon {
+                font-size: 20px;
+                border-color: white;
+                margin-bottom: 8px;
+            }
+        }
+
+        .header-left {
+            .header-left_text {
+                display: none;
+            }
+
+            .icon-react {
+                display: none;
+            }
+        }
+
+        .header-center {
+            .header-center_input {
+                width: 90px;
+                width: auto;
+                margin-right: 15px;
+            }
+
+
+        }
+
+        .header-right {
+            margin-right: 20px;
+
+            .header-right_dropdown {
+                display: none;
+            }
+
+            .header-right_icon {
+                // margin-right: 16px;
+            }
+        }
+    }
+
+}
 
 // Tablet
-@media (min-width: 740px) and (max-width: 1023px) {}
+@media (min-width: 740px) and (max-width: 1023px) {
+    .header {
+        .header-center {
+            .header-center_input {
+                width: 314px;
+            }
+        }
+    }
+}
 
 // PC
 @media (min-width: 1024px) {}
