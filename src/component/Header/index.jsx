@@ -5,20 +5,26 @@ import { FaReact } from "react-icons/fa";
 import { Avatar, Badge, Space } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { Dropdown } from 'antd';
-
-// 
 import { useState } from 'react';
 import { Button, Drawer } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { postLogout } from '../../services/api';
+import { message } from 'antd';
+import { doLogoutAction } from '../../redux/account/accountSlide';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
+    const dispatch = useDispatch()
+    const isAuthenticated = useSelector(state => state.account.isAuthenticated)
+    const user = useSelector(state => state.account.user)
 
     const items = [
         {
-            label: 'Quản lý tài khoản',
+            label: <span >Quản lý tài khoản</span>,
             key: '0',
         },
         {
-            label: 'Đăng xuất',
+            label: <span onClick={() => handleLogout()}>Đăng xuất</span>,
             key: '1',
         },
     ];
@@ -32,6 +38,16 @@ const Header = () => {
     const onClose = () => {
         setOpen(false);
     };
+    const nagivate = useNavigate()
+    const handleLogout = async () => {
+        const res = await postLogout()
+        console.log('ress:', res)
+        if (res.statusCode === 201) {
+            message.success('Đăng xuất tài khoản thành công');
+            dispatch(doLogoutAction())
+            nagivate('/')
+        }
+    }
 
     return (
         <header className="header">
@@ -42,8 +58,8 @@ const Header = () => {
                 </Button>
                 <Drawer title="Menu chức năng" onClose={onClose} open={open} placement='left' className='drawer_block'
                     style={{ width: '250px' }}>
-                    <p>Quản lý tài khoản</p>
-                    <p>Đăng xuất</p>
+                    {/* <p>Quản lý tài khoản</p>
+                    <p onClick={() => handleLogoutttt()}>Đăng xuất</p> */}
                 </Drawer>
             </div>
 
@@ -63,7 +79,12 @@ const Header = () => {
                 <Dropdown menu={{ items }} trigger={['click']} className='header-right_dropdown'>
                     <a onClick={(e) => e.preventDefault()}>
                         <Space className='header-right_text'>
-                            Click me
+                            {
+                                isAuthenticated === true ?
+                                    <span>{user.fullName}</span>
+                                    :
+                                    <span>Tài khoản</span>
+                            }
                             <DownOutlined />
                         </Space>
                     </a>

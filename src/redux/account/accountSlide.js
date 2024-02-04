@@ -2,9 +2,10 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     isAuthenticated: false,
+    isLoading: true,
     user: {
         email: '',
-        phane: '',
+        phone: '',
         fullname: '',
         role: '',
         avatar: '',
@@ -23,7 +24,8 @@ export const accountSlide = createSlice({
             // which detects changes to a "draft state" and produces a brand new
             // immutable state based off those changes
             state.isAuthenticated = true;
-            state.user = action.payload
+            state.isLoading = false;
+            state.user = action.payload;
         },
         doGetAccountAction: (state, action) => {
             // Redux Toolkit allows us to write "mutating" logic in reducers. It
@@ -31,7 +33,26 @@ export const accountSlide = createSlice({
             // which detects changes to a "draft state" and produces a brand new
             // immutable state based off those changes
             state.isAuthenticated = true;
+            state.isLoading = false;
             state.user = action.payload.user
+        },
+        doLogoutAction: (state, action) => {
+            // Redux Toolkit allows us to write "mutating" logic in reducers. It
+            // doesn't actually mutate the state because it uses the Immer library,
+            // which detects changes to a "draft state" and produces a brand new
+            // immutable state based off those changes
+            state.isAuthenticated = false;
+            // state.isLoading = false;
+            localStorage.removeItem('access_token')
+            // state.user = action.payload.user
+            state.user = {
+                email: '',
+                phone: '',
+                fullname: '',
+                role: '',
+                avatar: '',
+                id: '',
+            }
         },
     },
     // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -48,6 +69,6 @@ export const accountSlide = createSlice({
     },
 });
 
-export const { doLoginAction, doGetAccountAction } = accountSlide.actions;
+export const { doLoginAction, doGetAccountAction, doLogoutAction } = accountSlide.actions;
 
 export default accountSlide.reducer;
