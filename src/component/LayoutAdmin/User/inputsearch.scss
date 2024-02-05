@@ -1,0 +1,26 @@
+.main {
+    margin-bottom: 25px;
+    background-color: #f0f0f0;
+
+    .input-search {
+        display: flex;
+        flex-direction: column;
+
+        .input-search_wrapper {
+            gap: 25px;
+            display: flex;
+
+            .input-search_detail {
+                .input-search_input {
+                    width: 412px;
+                }
+            }
+        }
+
+        .input-search_wrapper-input {
+            display: flex;
+            gap: 25px;
+            margin-left: 1106px;
+        }
+    }
+}

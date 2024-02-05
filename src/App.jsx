@@ -20,6 +20,8 @@ import AdminPage from './pages/admin';
 import ProtectedRoute from './component/ProtectedRoute';
 import LayoutAdmin from './component/LayoutAdmin';
 import DashBoard from './component/Dashboard'
+import UserTable from './component/LayoutAdmin/User/UserTable'
+import InputSearch from './component/LayoutAdmin/User/InputSearch';
 // xoa het test redux
 
 const Layout = () => {
@@ -110,6 +112,10 @@ export default function App() {
         {
           path: "book",
           element: <BookPage />,
+        },
+        {
+          path: "/admin/user",
+          element: <InputSearch />,
         },
       ],
     },

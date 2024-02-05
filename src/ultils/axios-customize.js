@@ -11,7 +11,6 @@ instance.defaults.headers.common = { 'Authorization': `Bearer ${localStorage.get
 
 const handleRefreshToken = async () => {
     const res = await instance.get('/api/v1/auth/refresh')
-    console.log('>>> res:', res)
     if (res && res.data) return res.data.access_token
     else null
 }
@@ -54,7 +53,6 @@ instance.interceptors.response.use(function (response) {
     ) {
         window.location.href = '/login'
     }
-
 
     return error && error.response && error.response.data ? error.response.data : Promise.reject(error);
 });

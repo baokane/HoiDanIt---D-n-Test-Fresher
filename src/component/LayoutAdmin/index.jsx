@@ -9,7 +9,7 @@ import {
     VideoCameraOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Button, theme, message } from 'antd';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 
 import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Space } from 'antd';
@@ -64,6 +64,7 @@ const LayoutAdmin = () => {
                                 key: '1',
                                 icon: <UserOutlined />,
                                 label: 'Dashboard',
+
                             },
                             {
                                 key: '2',
@@ -75,6 +76,7 @@ const LayoutAdmin = () => {
                                         key: '5',
                                         icon: <UploadOutlined />,
                                         label: 'CRUD',
+                                        onClick: () => { nagivate('/admin/user') }
                                     },
                                 ]
                             },
@@ -92,7 +94,7 @@ const LayoutAdmin = () => {
                     />
                 </Sider>
                 <Layout>
-                    <Header style={{ padding: 0, background: colorBgContainer }}>
+                    <Header style={{ padding: 0, background: colorBgContainer, backgroundColor: '#fafafa', }}>
                         <Button
                             type="text"
                             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -121,6 +123,8 @@ const LayoutAdmin = () => {
                             minHeight: 280,
                             background: colorBgContainer,
                             borderRadius: borderRadiusLG,
+                            backgroundColor: '#fafafa ',
+                            margin: '0'
                         }}
                     >
                         <Outlet />
