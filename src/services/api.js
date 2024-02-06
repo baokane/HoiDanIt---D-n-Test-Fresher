@@ -20,4 +20,8 @@ const postLogout = () => {
     return axios.post('/api/v1/auth/logout')
 }
 
-export { postRegister, postLogin, callFetchAccount, postLogout }
+const getFetchListUser = (current, pageSize) => {
+    return axios.get(`/api/v1/user?current=${current}&pageSize=${pageSize}`)
+}
+
+export { postRegister, postLogin, callFetchAccount, postLogout, getFetchListUser }

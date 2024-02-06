@@ -1,22 +1,52 @@
-import React from 'react';
-// import './index.css';
+import React, { useEffect, useState } from 'react';
 import { Table } from 'antd';
+import { getFetchListUser } from '../../../services/api';
+import { current } from '@reduxjs/toolkit';
 
 const columns = [
     {
-        title: 'Name',
-        dataIndex: 'name',
-        sorter: true,
+        title: 'ID',
+        dataIndex: '_id',
+        // sorter: true,
+        // key: 'ID'
     },
     {
-        title: 'Age',
-        dataIndex: 'age',
-        sorter: true,
+        title: 'Full name',
+        dataIndex: 'fullName',
+        // sorter: true,
+        // key: 'Full name',
     },
     {
-        title: 'Address',
-        dataIndex: 'address',
-        sorter: true,
+        title: 'Email',
+        dataIndex: 'email',
+        // sorter: true,
+        // key: 'Email',
+    },
+    {
+        title: 'Phone',
+        dataIndex: 'phone',
+        // sorter: true,
+        // key: 'Phone',
+    },
+    {
+        title: 'Avatar',
+        dataIndex: 'avatar',
+        // sorter: true,
+        // key: 'Avatar',
+    },
+    {
+        title: 'Action',
+        key: 'fullName',
+        // dataIndex: 'email',
+        // sorter: true,
+        render: function (text, record, index) {
+            return (
+                <>
+                    <button>DELETE</button>
+                    <button>UPDATE</button>
+                </>
+            )
+        }
     },
 ];
 
@@ -47,19 +77,51 @@ let data = [
     },
 ];
 
-data = data.concat(data).concat(data).concat(data)
 
-const onChange = (pagination, filters, sorter, extra) => {
-    console.log('params', pagination, filters, sorter, extra);
-};
 
-const UserTable = () => <Table
-    columns={columns}
-    dataSource={data}
-    onChange={onChange}
-    pagination={{
-        current: 6, pageSize: 5, showSizeChanger: true
-    }}
-/>;
+
+const UserTable = () => {
+
+    const [listUser, setListUser] = useState('')
+    const [totalUsers, setTotalUsers] = useState(0)
+    const [current, setCurrent] = useState(1)
+    const [pageSize, setPageSize] = useState(2)
+
+    const onChange = (pagination, filters, sorter, extra) => {
+        console.log('params', pagination, filters, sorter, extra);
+        if (current !== pagination && pagination.current) {
+            setCurrent(pagination.current)
+            console.log(current)
+        }
+        // if (pageSize !== pagination && pagination.pageSize) {
+        //     setPageSize(pagination.pageSize)
+        //     setCurrent(1)
+        // }
+    };
+
+    useEffect(() => {
+        fetchListUser()
+    }, [current, pageSize])
+
+    const fetchListUser = async () => {
+        const res = await getFetchListUser(current, pageSize)
+        console.log('>>>>res:', res)
+        if (res && res.data) {
+            setListUser(res.data.result)
+            setTotalUsers(res.data.meta.total)
+        }
+    }
+
+    return (
+        <Table
+            columns={columns}
+            dataSource={listUser}
+            onChange={onChange}
+            rowKey='_id'
+            pagination={{
+                current: current, pageSize: pageSize, showSizeChanger: true, total: totalUsers
+            }}
+        />)
+}
 
 export default UserTable;

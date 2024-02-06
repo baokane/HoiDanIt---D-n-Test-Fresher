@@ -14,7 +14,7 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Space } from 'antd';
 import { doLogoutAction } from '../../redux/account/accountSlide';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { postLogout } from '../../services/api';
 
 const { Header, Sider, Content } = Layout;
@@ -39,6 +39,8 @@ const LayoutAdmin = () => {
 
     const dispatch = useDispatch()
     const nagivate = useNavigate()
+    const isAuthenticated = useSelector(state => state.account.isAuthenticated)
+    const user = useSelector(state => state.account.user)
 
     const handleLogoutAdmin = async () => {
         const res = await postLogout()
@@ -109,7 +111,11 @@ const LayoutAdmin = () => {
                         <Dropdown menu={{ items }} trigger={['click']} className='dropdown_admin'>
                             <a onClick={(e) => e.preventDefault()}>
                                 <Space>
-                                    <span>Click me</span>
+                                    {isAuthenticated === true ?
+                                        <span>{user.fullName}</span>
+                                        :
+                                        <span>Tài khoản</span>
+                                    }
                                     <DownOutlined />
                                 </Space>
                             </a>
