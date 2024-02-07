@@ -115,7 +115,7 @@ export default function App() {
         },
         {
           path: "/admin/user",
-          element: <InputSearch />,
+          element: <UserTable />,
         },
       ],
     },

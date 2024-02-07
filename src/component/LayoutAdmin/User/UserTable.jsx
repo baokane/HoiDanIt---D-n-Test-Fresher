@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from 'antd';
 import { getFetchListUser } from '../../../services/api';
-import { current } from '@reduxjs/toolkit';
-
-
+import InputSearch from './InputSearch';
 
 let data = [
     {
@@ -32,39 +30,36 @@ let data = [
     },
 ];
 
-
-
-
 const UserTable = () => {
     const columns = [
         {
             title: 'ID',
             dataIndex: '_id',
-            // sorter: true,
+            sorter: true,
             // key: 'ID'
         },
         {
             title: 'Full name',
             dataIndex: 'fullName',
-            // sorter: true,
+            sorter: true,
             // key: 'Full name',
         },
         {
             title: 'Email',
             dataIndex: 'email',
-            // sorter: true,
+            sorter: true,
             // key: 'Email',
         },
         {
             title: 'Phone',
             dataIndex: 'phone',
-            // sorter: true,
+            sorter: true,
             // key: 'Phone',
         },
         // {
         //     title: 'Avatar',
         //     dataIndex: 'avatar',
-        //     // sorter: true,
+        // sorter: true,
         //     // key: 'Avatar',
         // },
         {
@@ -103,8 +98,12 @@ const UserTable = () => {
         fetchListUser()
     }, [current, pageSize])
 
-    const fetchListUser = async () => {
-        const res = await getFetchListUser(current, pageSize)
+    const fetchListUser = async (searchData) => {
+        let query = `current=${current}&pageSize=${pageSize}`
+        if (searchData) {
+            query += `${searchData}`
+        }
+        const res = await getFetchListUser(query)
         console.log('>>>>res:', res)
         if (res && res.data) {
             setListUser(res.data.result)
@@ -112,16 +111,24 @@ const UserTable = () => {
         }
     }
 
+    const handleSearch = (query) => {
+        fetchListUser(query)
+    }
+
     return (
-        <Table
-            columns={columns}
-            dataSource={listUser}
-            onChange={onChange}
-            rowKey='_id'
-            pagination={{
-                current: current, pageSize: pageSize, showSizeChanger: true, total: total
-            }}
-        />)
+        <>
+            <InputSearch handleSearch={handleSearch} />
+            <Table
+                columns={columns}
+                dataSource={listUser}
+                onChange={onChange}
+                rowKey='_id'
+                pagination={{
+                    current: current, pageSize: pageSize, showSizeChanger: true, total: total
+                }}
+            />
+        </>
+    )
 }
 
 export default UserTable;
