@@ -1,13 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './inputsearch.scss';
 import { Button, Checkbox, Form, Input } from 'antd';
 import UserTable from './UserTable';
 
-const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-};
-
 const InputSearch = (props) => {
+    const [form] = Form.useForm();
+
     const onFinish = (values) => {
         let query = "";
         console.log('Success:', values);
@@ -27,10 +25,21 @@ const InputSearch = (props) => {
             props.handleSearch(query)
         }
     };
+
+    const handleReset = () => {
+        form.resetFields()
+    }
+
+    const onFinishFailed = (errorInfo) => {
+        console.log('Failed:', errorInfo);
+    };
     return (
         <>
             <div className='main'>
                 <Form
+                    // 
+                    form={form}
+                    // 
                     className='input-search'
                     name="basic"
                     labelCol={{ span: 24 }}
@@ -83,8 +92,8 @@ const InputSearch = (props) => {
                         </Form.Item>
 
                         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                            <Button htmlType="submit">
-                                clear
+                            <Button>
+                                <span onClick={() => handleReset()}>clear</span>
                             </Button>
                         </Form.Item>
                     </div>

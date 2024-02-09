@@ -36,25 +36,21 @@ const UserTable = () => {
             title: 'ID',
             dataIndex: '_id',
             sorter: true,
-            // key: 'ID'
         },
         {
             title: 'Full name',
             dataIndex: 'fullName',
             sorter: true,
-            // key: 'Full name',
         },
         {
             title: 'Email',
             dataIndex: 'email',
             sorter: true,
-            // key: 'Email',
         },
         {
             title: 'Phone',
             dataIndex: 'phone',
             sorter: true,
-            // key: 'Phone',
         },
         // {
         //     title: 'Avatar',
@@ -64,7 +60,7 @@ const UserTable = () => {
         // },
         {
             title: 'Action',
-            key: 'fullName',
+            // key: 'fullName',
             // dataIndex: 'email',
             // sorter: true,
             render: function (text, record, index) {
@@ -83,6 +79,10 @@ const UserTable = () => {
     const [current, setCurrent] = useState(1)
     const [pageSize, setPageSize] = useState(2)
 
+    const [isLoading, setIsLoading] = useState(false)
+    const [sortQuery, setSortQuery] = useState('')
+    const [filter, setFilter] = useState('')
+
     const onChange = (pagination, filters, sorter, extra) => {
         console.log('params', pagination, filters, sorter, extra);
         if (pagination && pagination.current !== current) {
@@ -92,33 +92,44 @@ const UserTable = () => {
             setPageSize(pagination.pageSize)
             setCurrent(1)
         }
+
+        if (sorter && sorter.field) {
+            const q = sorter.order === 'ascend' ? `sort=${sorter.field}` : `sort=-${sorter.field}`
+            setSortQuery(q)
+        }
     };
 
     useEffect(() => {
         fetchListUser()
-    }, [current, pageSize])
+    }, [current, pageSize, sortQuery, filter])
 
-    const fetchListUser = async (searchData) => {
+    const fetchListUser = async () => {
+        setIsLoading(true)
         let query = `current=${current}&pageSize=${pageSize}`
-        if (searchData) {
-            query += `${searchData}`
+        if (filter) {
+            query += `${filter}`
+        }
+
+        if (sortQuery) {
+            query += `&${sortQuery}`
         }
         const res = await getFetchListUser(query)
-        console.log('>>>>res:', res)
         if (res && res.data) {
             setListUser(res.data.result)
             setTotal(res.data.meta.total)
         }
+        setIsLoading(false)
     }
 
     const handleSearch = (query) => {
-        fetchListUser(query)
+        setFilter(query)
     }
 
     return (
         <>
             <InputSearch handleSearch={handleSearch} />
             <Table
+                loading={isLoading}
                 columns={columns}
                 dataSource={listUser}
                 onChange={onChange}
