@@ -1,4 +1,4 @@
-import { SearchOutlined, ShoppingCartOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { SearchOutlined, ShoppingCartOutlined, UnorderedListOutlined, UserOutlined } from '@ant-design/icons';
 import './header.scss'
 import '../../responsive/index.scss'
 import { FaReact } from "react-icons/fa";
@@ -20,7 +20,7 @@ const Header = () => {
 
     const items = [
         {
-            label: <span >Quản lý tài khoản</span>,
+            label: <span>Quản lý tài khoản</span>,
             key: '0',
         },
         {
@@ -28,6 +28,13 @@ const Header = () => {
             key: '1',
         },
     ];
+
+    if (user.role === 'ADMIN') {
+        items.unshift({
+            label: <span onClick={() => nagivate('/admin')}>Trang quản trị</span>,
+            key: '2',
+        },)
+    }
 
     const [open, setOpen] = useState(false);
 
@@ -48,6 +55,8 @@ const Header = () => {
             nagivate('/')
         }
     }
+
+    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`
 
     return (
         <header className="header">
@@ -80,10 +89,13 @@ const Header = () => {
                     <a onClick={(e) => e.preventDefault()}>
                         <Space className='header-right_text'>
                             {
-                                isAuthenticated === true ?
+                                isAuthenticated === true ? <>
+                                    <Avatar icon={<UserOutlined />} src={urlAvatar} />
                                     <span>{user.fullName}</span>
+                                </>
                                     :
                                     <span>Tài khoản</span>
+
                             }
                             <DownOutlined />
                         </Space>

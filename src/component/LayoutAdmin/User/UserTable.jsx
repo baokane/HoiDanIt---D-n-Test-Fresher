@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Table } from 'antd';
 import { getFetchListUser } from '../../../services/api';
 import InputSearch from './InputSearch';
+import UserViewDetail from './UserViewDetail';
 
 let data = [
     {
@@ -31,11 +32,51 @@ let data = [
 ];
 
 const UserTable = () => {
+
+    const [listUser, setListUser] = useState([])
+    const [total, setTotal] = useState(0)
+    const [current, setCurrent] = useState(1)
+    const [pageSize, setPageSize] = useState(2)
+
+    const [isLoading, setIsLoading] = useState(false)
+    const [sortQuery, setSortQuery] = useState('')
+    const [filter, setFilter] = useState('')
+
+    const [openViewDetail, setOpenViewDetail] = useState(false);
+    const [dataViewDetail, setDataViewDetail] = useState({})
+
+    const onChange = (pagination, filters, sorter, extra) => {
+        console.log('params', pagination, filters, sorter, extra);
+        if (pagination && pagination.current !== current) {
+            setCurrent(pagination.current)
+        }
+        if (pagination && pagination.pageSize !== pageSize) {
+            setPageSize(pagination.pageSize)
+            setCurrent(1)
+        }
+
+        if (sorter && sorter.field) {
+            const q = sorter.order === 'ascend' ? `&sort=${sorter.field}` : `&sort=-${sorter.field}`
+            setSortQuery(q)
+        }
+    };
+
     const columns = [
         {
             title: 'ID',
             dataIndex: '_id',
             sorter: true,
+            render: function (text, record, index) {
+                return (
+                    <a
+                        // onClick={() => alert('me')}
+                        onClick={() => {
+                            setDataViewDetail(record)
+                            setOpenViewDetail(true)
+                        }}
+                    >{record._id}</a>
+                )
+            }
         },
         {
             title: 'Full name',
@@ -55,7 +96,7 @@ const UserTable = () => {
         // {
         //     title: 'Avatar',
         //     dataIndex: 'avatar',
-        // sorter: true,
+        //     sorter: true,
         //     // key: 'Avatar',
         // },
         {
@@ -66,6 +107,7 @@ const UserTable = () => {
             render: function (text, record, index) {
                 return (
                     <>
+                        <a>A</a>
                         <button>DELETE</button>
                         <button>UPDATE</button>
                     </>
@@ -73,31 +115,6 @@ const UserTable = () => {
             }
         },
     ];
-
-    const [listUser, setListUser] = useState([])
-    const [total, setTotal] = useState(0)
-    const [current, setCurrent] = useState(1)
-    const [pageSize, setPageSize] = useState(2)
-
-    const [isLoading, setIsLoading] = useState(false)
-    const [sortQuery, setSortQuery] = useState('')
-    const [filter, setFilter] = useState('')
-
-    const onChange = (pagination, filters, sorter, extra) => {
-        console.log('params', pagination, filters, sorter, extra);
-        if (pagination && pagination.current !== current) {
-            setCurrent(pagination.current)
-        }
-        if (pagination && pagination.pageSize !== pageSize) {
-            setPageSize(pagination.pageSize)
-            setCurrent(1)
-        }
-
-        if (sorter && sorter.field) {
-            const q = sorter.order === 'ascend' ? `sort=${sorter.field}` : `sort=-${sorter.field}`
-            setSortQuery(q)
-        }
-    };
 
     useEffect(() => {
         fetchListUser()
@@ -111,7 +128,7 @@ const UserTable = () => {
         }
 
         if (sortQuery) {
-            query += `&${sortQuery}`
+            query += `${sortQuery}`
         }
         const res = await getFetchListUser(query)
         if (res && res.data) {
@@ -137,6 +154,12 @@ const UserTable = () => {
                 pagination={{
                     current: current, pageSize: pageSize, showSizeChanger: true, total: total
                 }}
+            />
+
+            <UserViewDetail
+                open={openViewDetail}
+                setOpen={setOpenViewDetail}
+                dataViewDetail={dataViewDetail}
             />
         </>
     )

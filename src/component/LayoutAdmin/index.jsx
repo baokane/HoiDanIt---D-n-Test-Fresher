@@ -20,18 +20,6 @@ import { postLogout } from '../../services/api';
 const { Header, Sider, Content } = Layout;
 
 const LayoutAdmin = () => {
-
-    const items = [
-        {
-            label: <span >Quản lý tài khoản</span>,
-            key: '0',
-        },
-        {
-            label: <span onClick={() => handleLogoutAdmin()}>Đăng xuất</span>,
-            key: '1',
-        },
-    ];
-
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer, borderRadiusLG },
@@ -50,6 +38,24 @@ const LayoutAdmin = () => {
             dispatch(doLogoutAction())
             nagivate('/')
         }
+    }
+
+    const items = [
+        {
+            label: <span >Quản lý tài khoản</span>,
+            key: '0',
+        },
+        {
+            label: <span onClick={() => handleLogoutAdmin()}>Đăng xuất</span>,
+            key: '1',
+        },
+    ];
+
+    if (user.role === 'ADMIN') {
+        items.unshift({
+            label: <span onClick={() => nagivate('/')}>Trang chủ</span>,
+            key: '2',
+        },)
     }
 
     return (
