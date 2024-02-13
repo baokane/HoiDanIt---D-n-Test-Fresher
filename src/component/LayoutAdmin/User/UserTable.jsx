@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Table } from 'antd';
+import { Button, Table } from 'antd';
 import { getFetchListUser } from '../../../services/api';
 import InputSearch from './InputSearch';
 import UserViewDetail from './UserViewDetail';
+import './UserTable.scss'
+import { ExportOutlined, ImportOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { GrPowerReset } from "react-icons/gr";
+import UserModalCreate from './UserModalCreate';
 
 let data = [
     {
@@ -45,6 +49,8 @@ const UserTable = () => {
     const [openViewDetail, setOpenViewDetail] = useState(false);
     const [dataViewDetail, setDataViewDetail] = useState({})
 
+    const [isOpenModalCreateform, setIsOpenModalCreateForm] = useState(false)
+
     const onChange = (pagination, filters, sorter, extra) => {
         console.log('params', pagination, filters, sorter, extra);
         if (pagination && pagination.current !== current) {
@@ -69,7 +75,6 @@ const UserTable = () => {
             render: function (text, record, index) {
                 return (
                     <a
-                        // onClick={() => alert('me')}
                         onClick={() => {
                             setDataViewDetail(record)
                             setOpenViewDetail(true)
@@ -107,7 +112,6 @@ const UserTable = () => {
             render: function (text, record, index) {
                 return (
                     <>
-                        <a>A</a>
                         <button>DELETE</button>
                         <button>UPDATE</button>
                     </>
@@ -142,17 +146,71 @@ const UserTable = () => {
         setFilter(query)
     }
 
+    const handleSubmitFormModalCreate = () => {
+        setIsOpenModalCreateForm(true)
+    }
+
+    const renderHeader = () => {
+        return (
+            <div className='user-table_header'>
+                <h3 className='user-table-header_left'>Table List Users</h3>
+                <div className='user-table-header_right'>
+                    <Button className='user-table-header_button' type="primary" icon={<ExportOutlined />}>
+                        Export
+                    </Button>
+                    <Button className='user-table-header_button' type="primary" icon={<ImportOutlined />}>
+                        Import
+                    </Button>
+                    <Button
+                        className='user-table-header_button'
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={() => handleSubmitFormModalCreate()}
+                    >
+                        Thêm mới
+                    </Button>
+                    <Button className='user-table-header_button user-table-header_button-arrow'
+                        type="text"
+                        icon={<GrPowerReset />}
+                        onClick={() => {
+                            setCurrent(1)
+                            setPageSize(2)
+                            setFilter('')
+                            setSortQuery('')
+                        }}
+                    >
+
+                    </Button>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <>
-            <InputSearch handleSearch={handleSearch} />
+            <InputSearch
+                handleSearch={handleSearch}
+                current={current}
+                setCurrent={setCurrent}
+                pageSize={pageSize}
+                setPageSize={setPageSize}
+                setFilter={setFilter}
+                setSortQuery={setSortQuery}
+            />
             <Table
+                title={renderHeader}
                 loading={isLoading}
                 columns={columns}
                 dataSource={listUser}
                 onChange={onChange}
                 rowKey='_id'
                 pagination={{
-                    current: current, pageSize: pageSize, showSizeChanger: true, total: total
+                    current: current, pageSize: pageSize,
+                    showSizeChanger: true,
+                    total: total,
+                    showTotal: (total, range) => {
+                        return <div>{range[0]}-{range[1]} trên {total} rows</div>
+                    }
                 }}
             />
 
@@ -160,6 +218,11 @@ const UserTable = () => {
                 open={openViewDetail}
                 setOpen={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}
+            />
+
+            <UserModalCreate
+                setIsModalOpen={setIsOpenModalCreateForm}
+                isModalOpen={isOpenModalCreateform}
             />
         </>
     )

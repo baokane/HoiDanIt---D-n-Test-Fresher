@@ -24,4 +24,8 @@ const getFetchListUser = (query) => {
     return axios.get(`/api/v1/user?${query}`)
 }
 
-export { postRegister, postLogin, callFetchAccount, postLogout, getFetchListUser }
+const postCreateUserAdmin = (fullName, password, email, phone) => {
+    return axios.post('/api/v1/user', { fullName, password, email, phone })
+}
+
+export { postRegister, postLogin, callFetchAccount, postLogout, getFetchListUser, postCreateUserAdmin }

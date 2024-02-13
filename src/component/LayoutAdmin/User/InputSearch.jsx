@@ -4,6 +4,7 @@ import { Button, Checkbox, Form, Input } from 'antd';
 import UserTable from './UserTable';
 
 const InputSearch = (props) => {
+    const { setCurrent, setPageSize, setFilter, setSortQuery } = props
     const [form] = Form.useForm();
 
     const onFinish = (values) => {
@@ -28,6 +29,10 @@ const InputSearch = (props) => {
 
     const handleReset = () => {
         form.resetFields()
+        setCurrent(1)
+        setPageSize(2)
+        setSortQuery('')
+        setFilter('')
     }
 
     const onFinishFailed = (errorInfo) => {

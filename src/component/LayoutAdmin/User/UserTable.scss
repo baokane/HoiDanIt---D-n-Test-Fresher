@@ -1,0 +1,17 @@
+.user-table_header {
+    display: flex;
+    justify-content: space-between;
+
+    .user-table-header_left {}
+
+    .user-table-header_right {
+        display: flex;
+        gap: 15px;
+
+        .user-table-header_button {}
+
+        .user-table-header_button-arrow {
+            font-size: 18px;
+        }
+    }
+}

@@ -8,7 +8,7 @@ import {
     UserOutlined,
     VideoCameraOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, Button, theme, message } from 'antd';
+import { Layout, Menu, Button, theme, message, Avatar } from 'antd';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 
 import { DownOutlined } from '@ant-design/icons';
@@ -57,6 +57,8 @@ const LayoutAdmin = () => {
             key: '2',
         },)
     }
+
+    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`
 
     return (
         <>
@@ -118,7 +120,10 @@ const LayoutAdmin = () => {
                             <a onClick={(e) => e.preventDefault()}>
                                 <Space>
                                     {isAuthenticated === true ?
-                                        <span>{user.fullName}</span>
+                                        <>
+                                            <Avatar icon={<UserOutlined />} src={urlAvatar} />
+                                            <span className='dropdown-admin_fullname'>{user.fullName}</span>
+                                        </>
                                         :
                                         <span>Tài khoản</span>
                                     }

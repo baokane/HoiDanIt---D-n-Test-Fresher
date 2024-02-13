@@ -3,9 +3,14 @@ section.ant-layout.ant-layout-has-sider.admin__menu.css-dev-only-do-not-override
 }
 
 .dropdown_admin {
-    margin-left: 1200px;
+    margin-left: 1144px;
 
-    span {
+    .dropdown-admin_avatar {
         font-size: 16px;
     }
+
+    .dropdown-admin_fullname {
+        font-size: 16px;
+    }
+
 }
