@@ -223,6 +223,7 @@ const UserTable = () => {
             <UserModalCreate
                 setIsModalOpen={setIsOpenModalCreateForm}
                 isModalOpen={isOpenModalCreateform}
+                fetchListUser={fetchListUser}
             />
         </>
     )

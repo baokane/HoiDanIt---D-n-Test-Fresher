@@ -1,33 +1,45 @@
 import React, { useState } from 'react';
-// import './index.css';
-import { Button, Checkbox, Divider, Form, Input, Modal } from 'antd';
+import { Button, Checkbox, Divider, Form, Input, Modal, message, notification } from 'antd';
 import { postCreateUserAdmin } from '../../../services/api';
 
 const UserModalCreate = (props) => {
-    const { setIsModalOpen, isModalOpen } = props
-    // const [isModalOpen, setIsModalOpen] = useState(false);
+    const { setIsModalOpen, isModalOpen, fetchListUser } = props
     const [form] = Form.useForm();
+
+    const [isModalLoading, setIsModalLoaing] = useState(false);
 
     const showModal = () => {
         setIsModalOpen(true);
     };
 
     const handleOk = () => {
-        setIsModalOpen(false);
+        // setIsModalOpen(false);
         form.submit()
     };
 
     const handleCancel = () => {
         setIsModalOpen(false);
+        form.resetFields()
     };
 
     const onFinish = async (values) => {
         console.log('Success:', values);
+        setIsModalLoaing(true)
         const res = await postCreateUserAdmin(values.username, values.password, values.email, values.phone)
-        console.log('res:', res)
-        // if (res && res.statusCode === 201) {
+        if (res && res.statusCode === 201) {
+            message.success("Tạo mới user thành công!")
+            form.resetFields()
+            setIsModalOpen(false)
+            await fetchListUser()
+        }
+        if (res && res.statusCode === 400) {
+            notification.error({
+                message: 'Có lỗi xảy ra',
+                description: 'Tạo mới user thất bại!'
+            })
+        }
+        setIsModalLoaing(false)
 
-        // }
     };
 
     const onFinishFailed = (errorInfo) => {
@@ -36,11 +48,8 @@ const UserModalCreate = (props) => {
 
     return (
         <>
-            {/* <Button type="primary" onClick={showModal}>
-                Open Modal
-            </Button> */}
-            <Modal title="Thêm mới người dùng" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-                <Divider />
+
+            <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} confirmLoading={isModalLoading}>
                 <Form
                     form={form}
                     name="basic"
