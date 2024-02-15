@@ -7,6 +7,7 @@ import './UserTable.scss'
 import { ExportOutlined, ImportOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { GrPowerReset } from "react-icons/gr";
 import UserModalCreate from './UserModalCreate';
+import UserImport from './UserImport';
 
 let data = [
     {
@@ -50,6 +51,8 @@ const UserTable = () => {
     const [dataViewDetail, setDataViewDetail] = useState({})
 
     const [isOpenModalCreateform, setIsOpenModalCreateForm] = useState(false)
+
+    const [isOpenModalImport, setIsOpenModalImport] = useState(false)
 
     const onChange = (pagination, filters, sorter, extra) => {
         console.log('params', pagination, filters, sorter, extra);
@@ -150,6 +153,10 @@ const UserTable = () => {
         setIsOpenModalCreateForm(true)
     }
 
+    const handleOpenModalImport = () => {
+        setIsOpenModalImport(true)
+    }
+
     const renderHeader = () => {
         return (
             <div className='user-table_header'>
@@ -158,7 +165,12 @@ const UserTable = () => {
                     <Button className='user-table-header_button' type="primary" icon={<ExportOutlined />}>
                         Export
                     </Button>
-                    <Button className='user-table-header_button' type="primary" icon={<ImportOutlined />}>
+                    <Button
+                        className='user-table-header_button'
+                        type="primary"
+                        icon={<ImportOutlined />}
+                        onClick={handleOpenModalImport}
+                    >
                         Import
                     </Button>
                     <Button
@@ -224,6 +236,11 @@ const UserTable = () => {
                 setIsModalOpen={setIsOpenModalCreateForm}
                 isModalOpen={isOpenModalCreateform}
                 fetchListUser={fetchListUser}
+            />
+
+            <UserImport
+                isModalOpen={isOpenModalImport}
+                setIsModalOpen={setIsOpenModalImport}
             />
         </>
     )

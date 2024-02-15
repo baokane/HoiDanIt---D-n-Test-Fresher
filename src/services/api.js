@@ -28,4 +28,8 @@ const postCreateUserAdmin = (fullName, password, email, phone) => {
     return axios.post('/api/v1/user', { fullName, password, email, phone })
 }
 
-export { postRegister, postLogin, callFetchAccount, postLogout, getFetchListUser, postCreateUserAdmin }
+const callBulkCreateUser = (data) => {
+    return axios.post('/api/v1/user/bulk-create', data)
+}
+
+export { postRegister, postLogin, callFetchAccount, postLogout, getFetchListUser, postCreateUserAdmin, callBulkCreateUser }
