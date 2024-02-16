@@ -6,8 +6,12 @@ import UserViewDetail from './UserViewDetail';
 import './UserTable.scss'
 import { ExportOutlined, ImportOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { GrPowerReset } from "react-icons/gr";
+import { FaPen } from "react-icons/fa";
+import { FaRegTrashCan } from "react-icons/fa6";
 import UserModalCreate from './UserModalCreate';
 import UserImport from './UserImport';
+import * as XLSX from 'xlsx'
+import UserModalUpdate from './UserModalUpdate';
 
 let data = [
     {
@@ -51,6 +55,9 @@ const UserTable = () => {
     const [dataViewDetail, setDataViewDetail] = useState({})
 
     const [isOpenModalCreateform, setIsOpenModalCreateForm] = useState(false)
+
+    const [isOpenModalUpdate, setIsOpenModalUpdate] = useState(false)
+    const [dataUpdate, setDataUpdate] = useState({})
 
     const [isOpenModalImport, setIsOpenModalImport] = useState(false)
 
@@ -113,10 +120,15 @@ const UserTable = () => {
             // dataIndex: 'email',
             // sorter: true,
             render: function (text, record, index) {
+                // console.log('record:', record)
                 return (
                     <>
-                        <button>DELETE</button>
-                        <button>UPDATE</button>
+                        <FaRegTrashCan style={{ marginRight: '20px' }} />
+                        <FaPen onClick={() => {
+                            console.log('data update:', record)
+                            setIsOpenModalUpdate(true)
+                            setDataUpdate(record)
+                        }} />
                     </>
                 )
             }
@@ -157,12 +169,29 @@ const UserTable = () => {
         setIsOpenModalImport(true)
     }
 
+    const handleExportTable = () => {
+        if (listUser && listUser.length > 0) {
+            const worksheet = XLSX.utils.json_to_sheet(listUser);
+            const workbook = XLSX.utils.book_new();
+            console.log('>>>wb:', workbook)
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+            //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+            //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+            XLSX.writeFile(workbook, "ExportUsers.csv");
+        }
+    }
+
     const renderHeader = () => {
         return (
             <div className='user-table_header'>
                 <h3 className='user-table-header_left'>Table List Users</h3>
                 <div className='user-table-header_right'>
-                    <Button className='user-table-header_button' type="primary" icon={<ExportOutlined />}>
+                    <Button
+                        className='user-table-header_button'
+                        type="primary"
+                        icon={<ExportOutlined />}
+                        onClick={() => handleExportTable()}
+                    >
                         Export
                     </Button>
                     <Button
@@ -241,6 +270,14 @@ const UserTable = () => {
             <UserImport
                 isModalOpen={isOpenModalImport}
                 setIsModalOpen={setIsOpenModalImport}
+                fetchListUser={fetchListUser}
+            />
+
+            <UserModalUpdate
+                setIsModalOpen={setIsOpenModalUpdate}
+                isModalOpen={isOpenModalUpdate}
+                fetchListUser={fetchListUser}
+                dataUpdate={dataUpdate}
             />
         </>
     )

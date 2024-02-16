@@ -5,9 +5,10 @@ import { InboxOutlined } from '@ant-design/icons';
 import { message, Upload } from 'antd';
 import * as XLSX from 'xlsx'
 import { callBulkCreateUser } from '../../../services/api';
+import SampleFile from './data/bảngtính1.xlsx?url'
 
 const UserImport = (props) => {
-    const { isModalOpen, setIsModalOpen } = props
+    const { isModalOpen, setIsModalOpen, fetchListUser } = props
     const [dataExcel, setDataExcel] = useState([]);
 
     const showModal = () => {
@@ -28,7 +29,7 @@ const UserImport = (props) => {
             })
             setDataExcel([])
             setIsModalOpen(false)
-            // thiếu fetch user
+            fetchListUser()
         } else (
             notification.error({
                 message: 'Đã có lỗi xảy ra',
@@ -174,7 +175,7 @@ const UserImport = (props) => {
                     <p className="ant-upload-text">Click or drag file to this area to upload</p>
                     <p className="ant-upload-hint">
                         Support for a single or bulk upload. Strictly prohibited from uploading company data or other
-                        banned files.
+                        banned files. <a onClick={(e) => e.stopPropagation()} href={SampleFile} download>Click to download sample file</a>
                     </p>
                 </Dragger>
 
