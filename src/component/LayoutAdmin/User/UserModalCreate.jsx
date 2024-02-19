@@ -3,7 +3,7 @@ import { Button, Checkbox, Divider, Form, Input, Modal, message, notification } 
 import { postCreateUserAdmin } from '../../../services/api';
 
 const UserModalCreate = (props) => {
-    const { setIsModalOpen, isModalOpen, fetchListUser } = props
+    const { setIsModalOpen, isModalOpen, fetchListUser, setCurrent } = props
     const [form] = Form.useForm();
 
     const [isModalLoading, setIsModalLoaing] = useState(false);
@@ -31,6 +31,7 @@ const UserModalCreate = (props) => {
             form.resetFields()
             setIsModalOpen(false)
             await fetchListUser()
+            setCurrent(1)
         }
         if (res && res.statusCode === 400) {
             notification.error({

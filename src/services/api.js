@@ -36,8 +36,17 @@ const putUpdateUser = (_id, fullName, phone) => {
     return axios.put('/api/v1/user', { _id, fullName, phone })
 }
 
+const deleteUserAdmin = (id) => {
+    return axios.delete(`/api/v1/user/${id}`)
+}
+
+
+const getListBookWithPaginate = (query) => {
+    return axios.get(`/api/v1/book?${query}`)
+}
+
 export {
     postRegister, postLogin, callFetchAccount, postLogout,
     getFetchListUser, postCreateUserAdmin, callBulkCreateUser,
-    putUpdateUser
+    putUpdateUser, deleteUserAdmin, getListBookWithPaginate
 }

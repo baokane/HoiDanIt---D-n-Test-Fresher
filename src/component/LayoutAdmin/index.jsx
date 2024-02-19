@@ -86,7 +86,7 @@ const LayoutAdmin = () => {
                                         key: '5',
                                         icon: <UploadOutlined />,
                                         label: 'CRUD',
-                                        onClick: () => { nagivate('/admin/user') }
+                                        onClick: () => { nagivate('user') }
                                     },
                                 ]
                             },
@@ -94,6 +94,7 @@ const LayoutAdmin = () => {
                                 key: '3',
                                 icon: <UploadOutlined />,
                                 label: 'Manage Books',
+                                onClick: () => { nagivate('book') }
                             },
                             {
                                 key: '4',

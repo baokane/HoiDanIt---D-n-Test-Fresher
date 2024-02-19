@@ -1,0 +1,40 @@
+.book {
+    background-color: #f0f0f0;
+    width: 100%;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+
+    .book_wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+
+        .book_item {
+            .book_label {
+                .book_input {
+                    width: 412px;
+                    margin-right: 25px;
+                }
+            }
+        }
+    }
+
+    .book_submit {
+
+
+        .book-submit_wrapper {
+            text-align: right;
+
+            .book-btn_search {
+                margin-right: 20px;
+            }
+        }
+
+    }
+}
+
+:where(.css-dev-only-do-not-override-mxhywb).ant-upload-wrapper .ant-upload-list .ant-upload-list-item .ant-upload-list-item-actions .ant-upload-list-item-action.ant-btn-sm {
+    display: none;
+}

@@ -21,7 +21,7 @@ import ProtectedRoute from './component/ProtectedRoute';
 import LayoutAdmin from './component/LayoutAdmin';
 import DashBoard from './component/Dashboard'
 import UserTable from './component/LayoutAdmin/User/UserTable'
-import InputSearch from './component/LayoutAdmin/User/InputSearch';
+import TableBook from './component/LayoutAdmin/Book/TableBook';
 // xoa het test redux
 
 const Layout = () => {
@@ -109,13 +109,17 @@ export default function App() {
           path: "dashboard",
           element: <DashBoard />,
         },
-        {
-          path: "book",
-          element: <BookPage />,
-        },
+        // {
+        //   path: "book",
+        //   element: <BookPage />,
+        // },
         {
           path: "/admin/user",
           element: <UserTable />,
+        },
+        {
+          path: "/admin/book",
+          element: <TableBook />,
         },
       ],
     },

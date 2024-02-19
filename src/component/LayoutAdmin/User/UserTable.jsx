@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table } from 'antd';
-import { getFetchListUser } from '../../../services/api';
+import { Button, Table, message, Popconfirm, notification } from 'antd';
+import { deleteUserAdmin, getFetchListUser } from '../../../services/api';
 import InputSearch from './InputSearch';
 import UserViewDetail from './UserViewDetail';
 import './UserTable.scss'
@@ -77,6 +77,11 @@ const UserTable = () => {
         }
     };
 
+    // const handleConfirmDelete = async (userId) => {
+    //     const res = await deleteUserAdmin(userId)
+    //     console.log('res:', res)
+    // }
+
     const columns = [
         {
             title: 'ID',
@@ -120,10 +125,46 @@ const UserTable = () => {
             // dataIndex: 'email',
             // sorter: true,
             render: function (text, record, index) {
-                // console.log('record:', record)
+                // console.log('rc:', record)
+                const confirm = async (e) => {
+                    console.log(e);
+                    message.success('Click on Yes');
+                };
+
+                const cancel = (e) => {
+                    console.log(e);
+                    message.error('Click on No');
+                };
+
+                const handleConfirmDelete = async (userId) => {
+                    const res = await deleteUserAdmin(userId)
+                    if (res && res.data) {
+                        message.success('Xóa người dùng thành công')
+                        await fetchListUser()
+                        setCurrent(1)
+                    } else (
+                        notification.error({
+                            message: 'Có lỗi xảy ra',
+                            description: 'Xóa người dùng thất bại'
+                        })
+                    )
+                }
                 return (
                     <>
-                        <FaRegTrashCan style={{ marginRight: '20px' }} />
+
+                        <Popconfirm
+                            placement="topLeft"
+                            title="Xóa người dùng"
+                            description="Chắc chắn xóa người dùng này"
+                            onConfirm={() => handleConfirmDelete(record._id)}
+                            onCancel={cancel}
+                            okText="Xác nhận"
+                            cancelText="Hủy"
+                        >
+                            <FaRegTrashCan style={{ marginRight: '20px' }} />
+                        </Popconfirm>
+
+
                         <FaPen onClick={() => {
                             console.log('data update:', record)
                             setIsOpenModalUpdate(true)
@@ -228,7 +269,7 @@ const UserTable = () => {
     }
 
     return (
-        <>
+        <div className='admin_content'>
             <InputSearch
                 handleSearch={handleSearch}
                 current={current}
@@ -265,6 +306,7 @@ const UserTable = () => {
                 setIsModalOpen={setIsOpenModalCreateForm}
                 isModalOpen={isOpenModalCreateform}
                 fetchListUser={fetchListUser}
+                setCurrent={setCurrent}
             />
 
             <UserImport
@@ -279,7 +321,7 @@ const UserTable = () => {
                 fetchListUser={fetchListUser}
                 dataUpdate={dataUpdate}
             />
-        </>
+        </div>
     )
 }
 
