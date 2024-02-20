@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Table } from 'antd';
+import { Table, Button } from 'antd';
 import { getListBookWithPaginate } from '../../../services/api';
 import moment from 'moment';
 import InputSearchBook from './InputSearchBook';
 import ViewDetailBook from './ViewDetailBook';
+import { ExportOutlined, ImportOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { GrPowerReset } from "react-icons/gr";
+import './TableBook.scss'
+import BookModalCreate from '../../../../BookModalCreate';
+import ModalCreateBook from './ModalCreateBook';
 
 const data = [
     {
@@ -103,6 +108,8 @@ const TableBook = (props) => {
     const [dataViewBook, setDataViewBook] = useState({})
     const [openViewModal, setOpenViewModal] = useState(false)
 
+    const [openModalCreate, setOpenModalCreate] = useState(false)
+
     const onChange = (pagination, filters, sorter, extra) => {
         // console.log('params', pagination, filters, sorter, extra);
         if (currentBook !== pagination.current) {
@@ -138,6 +145,54 @@ const TableBook = (props) => {
         fetchListBook()
     }, [currentBook, pageSizeBook, sortBook, filterBook])
 
+    const renderHeaderTableBook = () => {
+        return (
+            <div className='user-table_header'>
+                <h3 className='user-table-header_left'>Table List Book</h3>
+                <div className='user-table-header_right'>
+                    <Button
+                        className='user-table-header_button'
+                        type="primary"
+                        icon={<ExportOutlined />}
+                    // onClick={() => handleExportTable()}
+                    >
+                        Export
+                    </Button>
+                    <Button
+                        className='user-table-header_button'
+                        type="primary"
+                        icon={<ImportOutlined />}
+                    // onClick={handleOpenModalImport}
+                    >
+                        Import
+                    </Button>
+                    <Button
+                        className='user-table-header_button'
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={() => {
+                            setOpenModalCreate(true)
+                        }}
+                    >
+                        Thêm mới
+                    </Button>
+                    <Button className='user-table-header_button user-table-header_button-arrow'
+                        type="text"
+                        icon={<GrPowerReset />}
+                    // onClick={() => {
+                    //     setCurrent(1)
+                    //     setPageSize(2)
+                    //     setFilter('')
+                    //     setSortQuery('')
+                    // }}
+                    >
+
+                    </Button>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <>
             <InputSearchBook
@@ -145,6 +200,7 @@ const TableBook = (props) => {
                 filterBook={filterBook}
             />
             <Table
+                title={renderHeaderTableBook}
                 rowKey='_id'
                 columns={columns}
                 dataSource={listBook}
@@ -156,6 +212,13 @@ const TableBook = (props) => {
                 open={openViewModal}
                 setOpen={setOpenViewModal}
             />
+
+            <BookModalCreate
+                openModalCreate={openModalCreate}
+                setOpenModalCreate={setOpenModalCreate}
+            />
+
+            {/* <ModalCreateBook /> */}
         </>
     )
 }

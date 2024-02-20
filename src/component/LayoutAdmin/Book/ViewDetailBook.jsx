@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Divider, Drawer } from 'antd';
 import { Badge, Descriptions } from 'antd';
 import moment from 'moment';
 import { PlusOutlined } from '@ant-design/icons';
 import { Modal, Upload } from 'antd';
+import { v4 as uuidv4 } from 'uuid';
 import './booktable.scss'
 
 const ViewDetailBook = (props) => {
@@ -24,6 +25,7 @@ const ViewDetailBook = (props) => {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
+
     const [fileList, setFileList] = useState([
         {
             uid: '-1',
@@ -51,9 +53,37 @@ const ViewDetailBook = (props) => {
         },
     ]);
 
+    useEffect(() => {
+        if (dataViewBook) {
+            let imgThumbnail = {}, imgSlider = []
+            if (dataViewBook.thumbnail) {
+                imgThumbnail = {
+                    uid: uuidv4(),
+                    name: dataViewBook.thumbnail,
+                    status: 'done',
+                    url: `${import.meta.env.VITE_BACKEND_URL}/images/book/${dataViewBook.thumbnail}`
+                }
+            }
+
+            if (dataViewBook.slider) {
+                dataViewBook.slider.map(item => {
+                    imgSlider.push({
+                        uid: uuidv4(),
+                        name: item,
+                        status: 'done',
+                        url: `${import.meta.env.VITE_BACKEND_URL}/images/book/${dataViewBook.slider}`
+                    })
+                })
+
+            }
+            setFileList([imgThumbnail, ...imgSlider])
+        }
+    }, [dataViewBook])
+
     const handleCancel = () => setPreviewOpen(false);
 
     const handlePreview = async (file) => {
+        console.log('file:', file)
         if (!file.url && !file.preview) {
             file.preview = await getBase64(file.originFileObj);
         }
@@ -101,6 +131,7 @@ const ViewDetailBook = (props) => {
                     fileList={fileList}
                     onPreview={handlePreview}
                     onChange={handleChange}
+                    showUploadList={{ showRemoveIcon: false }}
                 >
 
                 </Upload>
@@ -108,7 +139,7 @@ const ViewDetailBook = (props) => {
                     <img alt="example" style={{ width: '100%' }} src={previewImage} />
                 </Modal>
 
-            </Drawer>
+            </Drawer >
         </>
     );
 };
