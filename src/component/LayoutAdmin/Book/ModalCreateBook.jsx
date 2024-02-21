@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
-// import './index.css';
-import { Button, Col, Modal, Row, InputNumber, Form, Input, Select } from 'antd';
+import { Button, Col, Modal, Row, InputNumber, Form, Input, Select, Upload } from 'antd';
+import { useEffect, useState } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
+import UploadSlider from './UploadSlider';
+import { getCategoryBook } from '../../../services/api';
+
+const getBase64 = (file) =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+    });
 
 const ModalCreateBook = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    // Modal
     const showModal = () => {
         setIsModalOpen(true);
     };
@@ -13,7 +23,7 @@ const ModalCreateBook = () => {
         setIsModalOpen(false);
     };
 
-    const handleCancel = () => {
+    const handleCancelModal = () => {
         setIsModalOpen(false);
     };
 
@@ -27,9 +37,54 @@ const ModalCreateBook = () => {
     };
 
     // Select
-    const handleChange = (value) => {
+    const [listCategory, setListCategory] = useState({})
+    const handleChangeSelect = (value) => {
         console.log(`selected ${value}`);
     };
+
+    useEffect(() => {
+        (async () => {
+            const res = await getCategoryBook()
+            console.log('>res:', res)
+            if (res && res.data) {
+                const d = res.data.map((item) => {
+                    return {
+                        value: item,
+                        label: item
+                    }
+                })
+                setListCategory(d)
+            }
+        })();
+
+    }, [])
+    // Upload
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewImage, setPreviewImage] = useState('');
+    const [previewTitle, setPreviewTitle] = useState('');
+    const [fileList, setFileList] = useState([]);
+
+    const handleCancel = () => setPreviewOpen(false);
+
+    const handlePreview = async (file) => {
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+
+        setPreviewImage(file.url || (file.preview));
+        setPreviewOpen(true);
+        setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+    };
+
+    const handleChange = ({ fileList: newFileList }) =>
+        setFileList(newFileList);
+
+    const uploadButton = (
+        <button style={{ border: 0, background: 'none' }} type="button">
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>Upload</div>
+        </button>
+    );
 
     return (
         <>
@@ -37,7 +92,7 @@ const ModalCreateBook = () => {
                 Open Modal
             </Button>
 
-            <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width='50vw'>
+            <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancelModal} width='50vw'>
 
                 <Form
                     name="basic"
@@ -71,21 +126,24 @@ const ModalCreateBook = () => {
                             </Form.Item>
                         </Col>
 
-                        <Col span={12}>
+                        <Col span={6}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
-                                label="Tác giả"
+                                label="Giá tiền"
                                 name="author"
                                 rules={[{ required: true, message: 'Please input your password!' }]}
                             >
                                 <InputNumber
                                     addonAfter="vnd"
-                                // defaultValue={100}
+                                    formatter={(value, info) => {
+                                        console.log('value:', value, 'info:', info)
+                                        return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                    }}
                                 />
                             </Form.Item>
                         </Col>
 
-                        <Col span={12}>
+                        <Col span={6}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
                                 label="Thể loại"
@@ -97,13 +155,35 @@ const ModalCreateBook = () => {
                                     allowClear
                                     defaultValue={null}
                                     // style={{ width: 120 }}
-                                    onChange={handleChange}
-                                    options={[
-                                        { value: 'jack', label: 'Jack' },
-                                        { value: 'lucy', label: 'Lucy' },
-                                        { value: 'Yiminghe', label: 'yiminghe' },
-                                        { value: 'disabled', label: 'Disabled', disabled: true },
-                                    ]}
+                                    onChange={handleChangeSelect}
+                                    options={listCategory}
+                                />
+                            </Form.Item>
+                        </Col>
+
+                        <Col span={6}>
+                            <Form.Item
+                                labelCol={{ span: 24 }}
+                                label="Số lượng"
+                                name="quantity"
+                                rules={[{ required: true, message: 'Please input your password!' }]}
+                            >
+                                <InputNumber min={1} style={{ width: '100%' }} />
+
+                            </Form.Item>
+                        </Col>
+
+                        <Col span={6}>
+                            <Form.Item
+                                labelCol={{ span: 24 }}
+                                label="Đã bán"
+                                name="author"
+                                rules={[{ required: true, message: 'Please input your password!' }]}
+                            >
+                                <InputNumber
+                                    addonAfter="vnd"
+                                    initialValues={0}
+                                    min={1}
                                 />
                             </Form.Item>
                         </Col>
@@ -111,14 +191,38 @@ const ModalCreateBook = () => {
                         <Col span={12}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
-                                label="Số lượng"
-                                name="quantity"
+                                label="Ảnh Thumnail"
+                                name="thumnail"
                                 rules={[{ required: true, message: 'Please input your password!' }]}
                             >
-                                <InputNumber min={1} defaultValue={0} />
+                                <Upload
+                                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                                    listType="picture-card"
+                                    fileList={fileList}
+                                    onPreview={handlePreview}
+                                    onChange={handleChange}
+                                >
+                                    {fileList.length >= 8 ? null : uploadButton}
+                                </Upload>
+                                <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+                                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                                </Modal>
 
                             </Form.Item>
                         </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                labelCol={{ span: 24 }}
+                                label="Ảnh Slider"
+                                name="slider"
+                                rules={[{ required: true, message: 'Please input your password!' }]}
+                            >
+
+                                <UploadSlider />
+
+                            </Form.Item>
+                        </Col>
+
                     </Row>
                 </Form>
 

@@ -218,7 +218,7 @@ const TableBook = (props) => {
                 setOpenModalCreate={setOpenModalCreate}
             />
 
-            {/* <ModalCreateBook /> */}
+            <ModalCreateBook />
         </>
     )
 }

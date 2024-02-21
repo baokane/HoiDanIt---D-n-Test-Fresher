@@ -45,8 +45,13 @@ const getListBookWithPaginate = (query) => {
     return axios.get(`/api/v1/book?${query}`)
 }
 
+const getCategoryBook = () => {
+    return axios.get(`/api/v1/database/category`)
+}
+
 export {
     postRegister, postLogin, callFetchAccount, postLogout,
     getFetchListUser, postCreateUserAdmin, callBulkCreateUser,
-    putUpdateUser, deleteUserAdmin, getListBookWithPaginate
+    putUpdateUser, deleteUserAdmin, getListBookWithPaginate,
+    getCategoryBook
 }
