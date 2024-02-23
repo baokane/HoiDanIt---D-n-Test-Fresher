@@ -218,7 +218,10 @@ const TableBook = (props) => {
                 setOpenModalCreate={setOpenModalCreate}
             />
 
-            <ModalCreateBook />
+            <ModalCreateBook
+                fetchListBook={fetchListBook}
+                setListBook={setFilterBook}
+            />
         </>
     )
 }

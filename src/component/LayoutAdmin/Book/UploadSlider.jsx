@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Modal, Upload } from 'antd';
+import { callUploadBookImg } from '../../../services/api';
 
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -10,12 +11,14 @@ const getBase64 = (file) =>
         reader.onerror = (error) => reject(error);
     });
 
-const UploadSlider = () => {
+const UploadSlider = (props) => {
+    const { setImageSlider, imageSlider, handleUploadImageSlider } = props
 
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
     const [fileList, setFileList] = useState([])
+
 
     const handleCancel = () => setPreviewOpen(false);
 
@@ -42,11 +45,14 @@ const UploadSlider = () => {
     return (
         <>
             <Upload
-                action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                multiple
+                // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                name='slider'
                 listType="picture-card"
                 fileList={fileList}
                 onPreview={handlePreview}
                 onChange={handleChange}
+                customRequest={handleUploadImageSlider}
             >
                 {fileList.length >= 8 ? null : uploadButton}
             </Upload>

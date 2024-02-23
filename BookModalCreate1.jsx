@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Divider, Form, Input, InputNumber, message, Modal, notification, Row, Select, Upload } from 'antd';
-import { callUploadBookImg, postCreateBook } from './src/services/api';
-// import { callCreateAUser, callFetchCategory, callUploadBookImg } from './src/services/api';
-import { getCategoryBook } from './src/services/api'
+import { callCreateAUser, callFetchCategory, callUploadBookImg } from '../../../services/api';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
 const BookModalCreate = (props) => {
     const { openModalCreate, setOpenModalCreate } = props;
@@ -26,7 +24,7 @@ const BookModalCreate = (props) => {
 
     useEffect(() => {
         const fetchCategory = async () => {
-            const res = await getCategoryBook();
+            const res = await callFetchCategory();
             if (res && res.data) {
                 const d = res.data.map(item => {
                     return { label: item, value: item }
@@ -43,43 +41,22 @@ const BookModalCreate = (props) => {
         console.log(">>> check data thumbnail: ", dataThumbnail);
         console.log(">>> check data slider: ", dataSlider);
 
-        // return;
+        return;
         const { fullName, password, email, phone } = values;
-        // setIsSubmit(true)
-        const thumbnail = dataThumbnail[0].name
-        const slider = dataSlider.map(item => item.name)
-        const dataCreateBook = {
-            thumbnail: thumbnail,
-            slider: slider,
-            mainText: values.mainText,
-            author: values.author,
-            price: values.price,
-            sold: values.sold,
-            quantity: values.quantity,
-            category: values.category
+        setIsSubmit(true)
+        const res = await callCreateAUser(fullName, password, email, phone);
+        if (res && res.data) {
+            message.success('Tạo mới user thành công');
+            form.resetFields();
+            setOpenModalCreate(false);
+            await props.fetchBook()
+        } else {
+            notification.error({
+                message: 'Đã có lỗi xảy ra',
+                description: res.message
+            })
         }
-        const res = await postCreateBook({
-            thumbnail, slider, mainText: values.mainText,
-            author: values.author,
-            price: values.price,
-            sold: values.sold,
-            quantity: values.quantity,
-            category: values.category
-        });
-        console.log('res chinh quy:', res)
-
-        // if (res && res.data) {
-        //     message.success('Tạo mới user thành công');
-        //     form.resetFields();
-        //     setOpenModalCreate(false);
-        //     await props.fetchBook()
-        // } else {
-        //     notification.error({
-        //         message: 'Đã có lỗi xảy ra',
-        //         description: res.message
-        //     })
-        // }
-        // setIsSubmit(false)
+        setIsSubmit(false)
     };
 
 
@@ -117,7 +94,6 @@ const BookModalCreate = (props) => {
 
 
     const handleUploadFileThumbnail = async ({ file, onSuccess, onError }) => {
-        console.log('file IT:', file)
         const res = await callUploadBookImg(file);
         if (res && res.data) {
             setDataThumbnail([{
@@ -132,7 +108,6 @@ const BookModalCreate = (props) => {
 
     const handleUploadFileSlider = async ({ file, onSuccess, onError }) => {
         const res = await callUploadBookImg(file);
-        console.log('res phu:', res)
         if (res && res.data) {
             //copy previous state => upload multiple images
             setDataSlider((dataSlider) => [...dataSlider, {
@@ -236,7 +211,7 @@ const BookModalCreate = (props) => {
                                     defaultValue={null}
                                     showSearch
                                     allowClear
-                                    onChange={handleChange}
+                                    //  onChange={handleChange}
                                     options={listCategory}
                                 />
                             </Form.Item>
@@ -269,12 +244,11 @@ const BookModalCreate = (props) => {
                                 name="thumbnail"
                             >
                                 <Upload
+                                    name="thumbnail"
+                                    listType="picture-card"
                                     className="avatar-uploader"
                                     maxCount={1}
                                     multiple={false}
-
-                                    name="thumbnail"
-                                    listType="picture-card"
                                     customRequest={handleUploadFileThumbnail}
                                     beforeUpload={beforeUpload}
                                     onChange={handleChange}
@@ -300,10 +274,10 @@ const BookModalCreate = (props) => {
                                     name="slider"
                                     listType="picture-card"
                                     className="avatar-uploader"
-                                    beforeUpload={beforeUpload}
-                                    onRemove={(file) => handleRemoveFile(file, "slider")}
                                     customRequest={handleUploadFileSlider}
+                                    beforeUpload={beforeUpload}
                                     onChange={(info) => handleChange(info, 'slider')}
+                                    onRemove={(file) => handleRemoveFile(file, "slider")}
                                     onPreview={handlePreview}
                                 >
                                     <div>

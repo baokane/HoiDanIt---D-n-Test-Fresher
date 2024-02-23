@@ -1,8 +1,8 @@
-import { Button, Col, Modal, Row, InputNumber, Form, Input, Select, Upload } from 'antd';
+import { Button, Col, Modal, Row, InputNumber, Form, Input, Select, Upload, message, notification } from 'antd';
 import { useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import UploadSlider from './UploadSlider';
-import { getCategoryBook } from '../../../services/api';
+import { callUploadBookImg, getCategoryBook, postCreateBook } from '../../../services/api';
 
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -13,14 +13,20 @@ const getBase64 = (file) =>
     });
 
 const ModalCreateBook = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen, fetchListBook] = useState(false);
+
+    const [imageSlider, setImageSlider] = useState([])
+    const [dataThumbnail, setDataThumbnail] = useState([])
+
     // Modal
+    const [form] = Form.useForm();
     const showModal = () => {
         setIsModalOpen(true);
     };
 
     const handleOk = () => {
-        setIsModalOpen(false);
+        // setIsModalOpen(false);
+        form.submit()
     };
 
     const handleCancelModal = () => {
@@ -28,8 +34,48 @@ const ModalCreateBook = () => {
     };
 
     // Form
-    const onFinish = (values) => {
+    const onFinish = async (values) => {
         console.log('Success:', values);
+        console.log('slider:', imageSlider)
+        console.log('thumbnail:', dataThumbnail)
+        if (dataThumbnail.length === 0) {
+            notification.error({
+                message: 'Có lỗi xảy ra',
+                description: 'Vui lòng thêm sách thumbnail'
+            })
+            return
+        }
+        if (imageSlider.length === 0) {
+            notification.error({
+                message: 'Có lỗi xảy ra',
+                description: 'Vui lòng thêm sách slider'
+            })
+            return
+        }
+        const thumbnail = dataThumbnail[0].name
+        const slider = imageSlider.map(item => item.name)
+        const dataCreateBook = {
+            thumbnail: thumbnail,
+            slider: slider,
+            mainText: values.mainText,
+            author: values.author,
+            price: values.price,
+            sold: values.sold,
+            quantity: values.quantity,
+            category: values.category
+        }
+        const res = await postCreateBook(dataCreateBook);
+        console.log('res chinh dang lam::', res)
+        if (res && res.data) {
+            message.success("Tạo mới quyển sách thành công")
+            setIsModalOpen(false)
+            await fetchListBook()
+        } else {
+            notification.error({
+                message: 'Có lỗi xảy ra',
+                description: 'Tạo mới quyển sách thất bại'
+            })
+        }
     };
 
     const onFinishFailed = (errorInfo) => {
@@ -37,7 +83,7 @@ const ModalCreateBook = () => {
     };
 
     // Select
-    const [listCategory, setListCategory] = useState({})
+    const [listCategory, setListCategory] = useState([])
     const handleChangeSelect = (value) => {
         console.log(`selected ${value}`);
     };
@@ -64,7 +110,11 @@ const ModalCreateBook = () => {
     const [previewTitle, setPreviewTitle] = useState('');
     const [fileList, setFileList] = useState([]);
 
-    const handleCancel = () => setPreviewOpen(false);
+    // const [dataSlider, setDataSlider] = useState([])
+
+    const handleCancel = () => {
+        setPreviewOpen(false)
+    };
 
     const handlePreview = async (file) => {
         if (!file.url && !file.preview) {
@@ -76,8 +126,25 @@ const ModalCreateBook = () => {
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
 
-    const handleChange = ({ fileList: newFileList }) =>
+    const handleChange = async ({ fileList: newFileList }) => {
         setFileList(newFileList);
+    }
+
+    const handleImageThumnail = async ({ file, onSuccess, onError }) => {
+        // console.log('file dang lam:', file)
+        const res = await callUploadBookImg(file)
+        // console.log('>   res:', res)
+        if (res && res.data) {
+            setDataThumbnail([{
+                name: res.data.fileUploaded,
+                uid: file.uid
+            }])
+            onSuccess('ok')
+        } else {
+            onError('Đã có lỗi khi upload file');
+        }
+    }
+
 
     const uploadButton = (
         <button style={{ border: 0, background: 'none' }} type="button">
@@ -85,6 +152,23 @@ const ModalCreateBook = () => {
             <div style={{ marginTop: 8 }}>Upload</div>
         </button>
     );
+
+    // Slider image
+    const handleUploadImageSlider = async (options) => {
+        const { onSuccess, onError, file } = options;
+        // console.log('file:', file)
+        const res = await callUploadBookImg(file)
+        // console.log('>>>> res:', res)
+        if (res.data) {
+            setImageSlider((imageSlider) => [...imageSlider, {
+                name: res.data.fileUploaded,
+                uid: file.uid
+            }])
+            onSuccess('ok')
+        } else {
+            onError()
+        }
+    }
 
     return (
         <>
@@ -95,6 +179,7 @@ const ModalCreateBook = () => {
             <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancelModal} width='50vw'>
 
                 <Form
+                    form={form}
                     name="basic"
                     // labelCol={{ span: 8 }}
                     // wrapperCol={{ span: 16 }}
@@ -109,8 +194,8 @@ const ModalCreateBook = () => {
                             <Form.Item
                                 labelCol={{ span: 24 }}
                                 label="Tên sách"
-                                name="username"
-                                rules={[{ required: true, message: 'Please input your username!' }]}
+                                name="mainText"
+                                rules={[{ required: true, message: 'Vui lòng nhập tên sách' }]}
                             >
                                 <Input />
                             </Form.Item>
@@ -120,7 +205,7 @@ const ModalCreateBook = () => {
                                 labelCol={{ span: 24 }}
                                 label="Tác giả"
                                 name="author"
-                                rules={[{ required: true, message: 'Please input your password!' }]}
+                                rules={[{ required: true, message: 'Vui lòng nhập tác giả' }]}
                             >
                                 <Input />
                             </Form.Item>
@@ -130,8 +215,8 @@ const ModalCreateBook = () => {
                             <Form.Item
                                 labelCol={{ span: 24 }}
                                 label="Giá tiền"
-                                name="author"
-                                rules={[{ required: true, message: 'Please input your password!' }]}
+                                name="price"
+                                rules={[{ required: true, message: 'Vui lòng nhập giá tiền' }]}
                             >
                                 <InputNumber
                                     addonAfter="vnd"
@@ -148,13 +233,12 @@ const ModalCreateBook = () => {
                                 labelCol={{ span: 24 }}
                                 label="Thể loại"
                                 name="category"
-                                rules={[{ required: false, message: 'Please input your password!' }]}
+                                rules={[{ required: false, message: 'Vui lòng nhập thể loại' }]}
                             >
                                 <Select
                                     showSearch
                                     allowClear
                                     defaultValue={null}
-                                    // style={{ width: 120 }}
                                     onChange={handleChangeSelect}
                                     options={listCategory}
                                 />
@@ -166,7 +250,7 @@ const ModalCreateBook = () => {
                                 labelCol={{ span: 24 }}
                                 label="Số lượng"
                                 name="quantity"
-                                rules={[{ required: true, message: 'Please input your password!' }]}
+                                rules={[{ required: true, message: 'Vui lòng nhập số lượng sách' }]}
                             >
                                 <InputNumber min={1} style={{ width: '100%' }} />
 
@@ -177,11 +261,11 @@ const ModalCreateBook = () => {
                             <Form.Item
                                 labelCol={{ span: 24 }}
                                 label="Đã bán"
-                                name="author"
-                                rules={[{ required: true, message: 'Please input your password!' }]}
+                                name="sold"
+                                rules={[{ required: true, message: 'Vui lòng nhập số lượng đã bán' }]}
                             >
                                 <InputNumber
-                                    addonAfter="vnd"
+                                    style={{ width: ' 100%' }}
                                     initialValues={0}
                                     min={1}
                                 />
@@ -192,12 +276,17 @@ const ModalCreateBook = () => {
                             <Form.Item
                                 labelCol={{ span: 24 }}
                                 label="Ảnh Thumnail"
-                                name="thumnail"
-                                rules={[{ required: true, message: 'Please input your password!' }]}
+                                name='thumnail'
+                            // rules={[{ required: true, message: 'Vui lòng nhập ảnh thumbnail' }]}
                             >
                                 <Upload
-                                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                                    multiple={false}
+                                    maxCount={1}
+                                    // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+
+                                    name='thumnail'
                                     listType="picture-card"
+                                    customRequest={handleImageThumnail}
                                     fileList={fileList}
                                     onPreview={handlePreview}
                                     onChange={handleChange}
@@ -215,10 +304,14 @@ const ModalCreateBook = () => {
                                 labelCol={{ span: 24 }}
                                 label="Ảnh Slider"
                                 name="slider"
-                                rules={[{ required: true, message: 'Please input your password!' }]}
+                            // rules={[{ required: true, message: 'Please input your password!' }]}
                             >
 
-                                <UploadSlider />
+                                <UploadSlider
+                                    handleUploadImageSlider={handleUploadImageSlider}
+                                    imageSlider={imageSlider}
+                                    setImageSlider={setImageSlider}
+                                />
 
                             </Form.Item>
                         </Col>

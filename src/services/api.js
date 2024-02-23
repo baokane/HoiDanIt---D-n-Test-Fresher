@@ -49,9 +49,27 @@ const getCategoryBook = () => {
     return axios.get(`/api/v1/database/category`)
 }
 
+const callUploadBookImg = (fileImg) => {
+    const bodyFormData = new FormData();
+    bodyFormData.append('fileImg', fileImg);
+    return axios({
+        method: 'post',
+        url: '/api/v1/file/upload',
+        data: bodyFormData,
+        headers: {
+            "Content-Type": "multipart/form-data",
+            "upload-type": "book"
+        },
+    });
+}
+
+const postCreateBook = (query) => {
+    return axios.post(`/api/v1/book`, query)
+}
+
 export {
     postRegister, postLogin, callFetchAccount, postLogout,
     getFetchListUser, postCreateUserAdmin, callBulkCreateUser,
     putUpdateUser, deleteUserAdmin, getListBookWithPaginate,
-    getCategoryBook
+    getCategoryBook, callUploadBookImg, postCreateBook
 }
