@@ -11,8 +11,8 @@ const getBase64 = (file) =>
         reader.onerror = (error) => reject(error);
     });
 
-const UploadSlider = (props) => {
-    const { handleUploadImageSlider, imageSlider } = props
+const UploadThumbnail = (props) => {
+    const { handleUploadImageThumbnail, dataThumbnail } = props
 
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
@@ -42,21 +42,23 @@ const UploadSlider = (props) => {
         </button>
     );
 
-    const handleRemoveImageSlider = (file) => {
-        console.log('ílider:', imageSlider)
-        imageSlider.map(item => item.uid !== file.uid)
+    const handleRemoveImageThumbnail = (file) => {
+        dataThumbnail.map(item => {
+            item.uid !== file.uid
+        })
     }
 
     return (
         <>
             <Upload
-                multiple
+                multiple={false}
+                maxCount={1}
                 // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
                 name='slider'
                 listType="picture-card"
-                customRequest={handleUploadImageSlider}
+                customRequest={handleUploadImageThumbnail}
                 fileList={fileList}
-                onRemove={(file) => handleRemoveImageSlider(file)}
+                onRemove={(file) => handleRemoveImageThumbnail(file)}
                 onPreview={handlePreview}
                 onChange={handleChange}
             >
@@ -69,4 +71,4 @@ const UploadSlider = (props) => {
     )
 }
 
-export default UploadSlider
+export default UploadThumbnail

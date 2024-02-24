@@ -115,6 +115,8 @@ const ViewDetailBook = (props) => {
                     <Descriptions.Item label="Tên sách">{dataViewBook.mainText}</Descriptions.Item>
                     <Descriptions.Item label="Tác giả">{dataViewBook.author}</Descriptions.Item>
                     <Descriptions.Item label="Giá tiền">{dataViewBook.price}</Descriptions.Item>
+                    <Descriptions.Item label="Số lượng">{dataViewBook.quantity}</Descriptions.Item>
+                    <Descriptions.Item label="Đã bán">{dataViewBook.sold}</Descriptions.Item>
                     <Descriptions.Item label="Thể loại" span={2}>
                         <Badge status="processing" /> &nbsp;&nbsp;
                         {dataViewBook.category}

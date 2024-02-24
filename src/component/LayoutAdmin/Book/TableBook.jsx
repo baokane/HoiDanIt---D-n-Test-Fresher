@@ -103,7 +103,7 @@ const TableBook = (props) => {
     const [totalBook, setTotalBook] = useState(0)
 
     const [filterBook, setFilterBook] = useState('')
-    const [sortBook, setSortBook] = useState('')
+    const [sortBook, setSortBook] = useState('&sort=-updatedAt')
 
     const [dataViewBook, setDataViewBook] = useState({})
     const [openViewModal, setOpenViewModal] = useState(false)
@@ -124,6 +124,9 @@ const TableBook = (props) => {
         }
     };
 
+    useEffect(() => {
+        fetchListBook()
+    }, [currentBook, pageSizeBook, sortBook, filterBook])
 
     const fetchListBook = async () => {
         let queryBook = `current=${currentBook}&pageSize=${pageSizeBook}`
@@ -140,10 +143,6 @@ const TableBook = (props) => {
             setTotalBook(res.data.meta.total)
         }
     }
-
-    useEffect(() => {
-        fetchListBook()
-    }, [currentBook, pageSizeBook, sortBook, filterBook])
 
     const renderHeaderTableBook = () => {
         return (
@@ -216,11 +215,11 @@ const TableBook = (props) => {
             <BookModalCreate
                 openModalCreate={openModalCreate}
                 setOpenModalCreate={setOpenModalCreate}
+                fetchListBook={fetchListBook}
             />
 
             <ModalCreateBook
                 fetchListBook={fetchListBook}
-                setListBook={setFilterBook}
             />
         </>
     )

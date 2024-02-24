@@ -68,18 +68,18 @@ const BookModalCreate = (props) => {
         });
         console.log('res chinh quy:', res)
 
-        // if (res && res.data) {
-        //     message.success('Tạo mới user thành công');
-        //     form.resetFields();
-        //     setOpenModalCreate(false);
-        //     await props.fetchBook()
-        // } else {
-        //     notification.error({
-        //         message: 'Đã có lỗi xảy ra',
-        //         description: res.message
-        //     })
-        // }
-        // setIsSubmit(false)
+        if (res && res.data) {
+            message.success('Tạo mới user thành công');
+            // form.resetFields();
+            // setOpenModalCreate(false);
+            await props.fetchListBook()
+        } else {
+            notification.error({
+                message: 'Đã có lỗi xảy ra',
+                description: res.message
+            })
+        }
+        setIsSubmit(false)
     };
 
 
@@ -146,6 +146,7 @@ const BookModalCreate = (props) => {
     };
 
     const handleRemoveFile = (file, type) => {
+        console.log('file:', file)
         if (type === 'thumbnail') {
             setDataThumbnail([])
         }

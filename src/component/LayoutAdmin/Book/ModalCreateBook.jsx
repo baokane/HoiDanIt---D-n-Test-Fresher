@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import UploadSlider from './UploadSlider';
 import { callUploadBookImg, getCategoryBook, postCreateBook } from '../../../services/api';
+import UploadThumbnail from './UploadThumbnail';
 
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -12,12 +13,12 @@ const getBase64 = (file) =>
         reader.onerror = (error) => reject(error);
     });
 
-const ModalCreateBook = () => {
-    const [isModalOpen, setIsModalOpen, fetchListBook] = useState(false);
+const ModalCreateBook = (props) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [imageSlider, setImageSlider] = useState([])
     const [dataThumbnail, setDataThumbnail] = useState([])
-
+    console.log('is:', imageSlider, 'i th:', dataThumbnail)
     // Modal
     const [form] = Form.useForm();
     const showModal = () => {
@@ -30,6 +31,7 @@ const ModalCreateBook = () => {
     };
 
     const handleCancelModal = () => {
+        form.resetFields();
         setIsModalOpen(false);
     };
 
@@ -69,7 +71,10 @@ const ModalCreateBook = () => {
         if (res && res.data) {
             message.success("Tạo mới quyển sách thành công")
             setIsModalOpen(false)
-            await fetchListBook()
+            form.resetFields()
+            setDataThumbnail([])
+            setImageSlider([])
+            await props.fetchListBook()
         } else {
             notification.error({
                 message: 'Có lỗi xảy ra',
@@ -108,13 +113,10 @@ const ModalCreateBook = () => {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
-    const [fileList, setFileList] = useState([]);
+    const [fileList, setFileList] = useState([])
 
-    // const [dataSlider, setDataSlider] = useState([])
 
-    const handleCancel = () => {
-        setPreviewOpen(false)
-    };
+    const handleCancel = () => setPreviewOpen(false);
 
     const handlePreview = async (file) => {
         if (!file.url && !file.preview) {
@@ -126,11 +128,25 @@ const ModalCreateBook = () => {
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
 
-    const handleChange = async ({ fileList: newFileList }) => {
+    const handleChange = ({ fileList: newFileList }) =>
         setFileList(newFileList);
+
+    const uploadButton = (
+        <button style={{ border: 0, background: 'none' }} type="button">
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>Upload</div>
+        </button>
+    );
+
+    const handleRemoveImageSlider = (file) => {
+        console.log('ílider:', imageSlider)
+        imageSlider.map(item => item.uid !== file.uid)
     }
 
-    const handleImageThumnail = async ({ file, onSuccess, onError }) => {
+
+    // Thumbnail
+    const handleUploadImageThumbnail = async (options) => {
+        const { onSuccess, onError, file } = options;
         // console.log('file dang lam:', file)
         const res = await callUploadBookImg(file)
         // console.log('>   res:', res)
@@ -144,14 +160,6 @@ const ModalCreateBook = () => {
             onError('Đã có lỗi khi upload file');
         }
     }
-
-
-    const uploadButton = (
-        <button style={{ border: 0, background: 'none' }} type="button">
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>Upload</div>
-        </button>
-    );
 
     // Slider image
     const handleUploadImageSlider = async (options) => {
@@ -279,23 +287,11 @@ const ModalCreateBook = () => {
                                 name='thumnail'
                             // rules={[{ required: true, message: 'Vui lòng nhập ảnh thumbnail' }]}
                             >
-                                <Upload
-                                    multiple={false}
-                                    maxCount={1}
-                                    // action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
 
-                                    name='thumnail'
-                                    listType="picture-card"
-                                    customRequest={handleImageThumnail}
-                                    fileList={fileList}
-                                    onPreview={handlePreview}
-                                    onChange={handleChange}
-                                >
-                                    {fileList.length >= 8 ? null : uploadButton}
-                                </Upload>
-                                <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-                                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                                </Modal>
+                                <UploadThumbnail
+                                    handleUploadImageThumbnail={handleUploadImageThumbnail}
+                                    dataThumbnail={dataThumbnail}
+                                />
 
                             </Form.Item>
                         </Col>
@@ -310,7 +306,6 @@ const ModalCreateBook = () => {
                                 <UploadSlider
                                     handleUploadImageSlider={handleUploadImageSlider}
                                     imageSlider={imageSlider}
-                                    setImageSlider={setImageSlider}
                                 />
 
                             </Form.Item>
