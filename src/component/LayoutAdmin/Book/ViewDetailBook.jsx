@@ -27,30 +27,30 @@ const ViewDetailBook = (props) => {
     const [previewTitle, setPreviewTitle] = useState('');
 
     const [fileList, setFileList] = useState([
-        {
-            uid: '-1',
-            name: 'image.png',
-            status: 'done',
-            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        },
-        {
-            uid: '-2',
-            name: 'image.png',
-            status: 'done',
-            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        },
-        {
-            uid: '-3',
-            name: 'image.png',
-            status: 'done',
-            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        },
-        {
-            uid: '-4',
-            name: 'image.png',
-            status: 'done',
-            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        },
+        // {
+        //     uid: '-1',
+        //     name: 'image.png',
+        //     status: 'done',
+        //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        // },
+        // {
+        //     uid: '-2',
+        //     name: 'image.png',
+        //     status: 'done',
+        //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        // },
+        // {
+        //     uid: '-3',
+        //     name: 'image.png',
+        //     status: 'done',
+        //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        // },
+        // {
+        //     uid: '-4',
+        //     name: 'image.png',
+        //     status: 'done',
+        //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        // },
     ]);
 
     useEffect(() => {
@@ -82,6 +82,14 @@ const ViewDetailBook = (props) => {
 
     const handleCancel = () => setPreviewOpen(false);
 
+    const getBase64 = (file) =>
+        new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+
     const handlePreview = async (file) => {
         console.log('file:', file)
         if (!file.url && !file.preview) {
@@ -93,8 +101,9 @@ const ViewDetailBook = (props) => {
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
 
-    const handleChange = ({ fileList: newFileList }) =>
+    const handleChange = ({ fileList: newFileList }) => {
         setFileList(newFileList);
+    }
 
     const uploadButton = (
         <button style={{ border: 0, background: 'none' }} type="button">
@@ -102,7 +111,7 @@ const ViewDetailBook = (props) => {
             <div style={{ marginTop: 8 }}>Upload</div>
         </button>
     );
-
+    console.log('file list:', fileList)
     return (
         <>
             {/* <Button type="primary" onClick={showDrawer}>

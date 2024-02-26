@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button } from 'antd';
-import { getListBookWithPaginate } from '../../../services/api';
+import { Table, Button, message, Popconfirm } from 'antd';
+import { deleteBook, getListBookWithPaginate } from '../../../services/api';
 import moment from 'moment';
 import InputSearchBook from './InputSearchBook';
 import ViewDetailBook from './ViewDetailBook';
@@ -9,6 +9,10 @@ import { GrPowerReset } from "react-icons/gr";
 import './TableBook.scss'
 import BookModalCreate from '../../../../BookModalCreate';
 import ModalCreateBook from './ModalCreateBook';
+import { FaPen } from "react-icons/fa";
+import { FaRegTrashCan } from "react-icons/fa6";
+import ModalUpdateBook from './ModalUpdateBook/ModalUpdateBook';
+import BookModalUpdate from '../../../../BookModalUpdate';
 
 const data = [
     {
@@ -39,6 +43,7 @@ const data = [
 
 const TableBook = (props) => {
     // const { dataViewBook } = props
+
     const columns = [
         {
             title: 'ID',
@@ -49,6 +54,7 @@ const TableBook = (props) => {
                 return (
                     <a
                         onClick={() => {
+                            // setDataViewBook(record)
                             setDataViewBook(record)
                             setOpenViewModal(true)
                         }}
@@ -87,9 +93,59 @@ const TableBook = (props) => {
         {
             title: 'Action',
             dataIndex: '"price"',
-            render: () => {
+            render: (text, record, index) => {
+                console.log('text:', text, 'record:', record, 'index:', index)
+                const confirm = (e) => {
+                    console.log(e);
+                    message.success('Click on Yes');
+                };
+
+                const cancel = (e) => {
+                    console.log(e);
+                    message.error('Click on No');
+                };
+                const handleConfirmDeleteBook = async (id) => {
+                    const res = await deleteBook(id)
+                    if (res && res.data) {
+                        message.success('Xóa cuốn sách thành công');
+                        await fetchListBook()
+                        setCurrentBook(1)
+                    } else {
+                        notification.error({
+                            placement: 'topRight',
+                            message: 'Có lỗi xảy ra',
+                            description: 'Xóa cuốn sách thất bại'
+                        });
+                    }
+                }
                 return (
-                    <button>DELETE</button>
+                    <>
+                        <Popconfirm
+                            placement='left'
+                            title="Delete the task"
+                            description="Are you sure to delete this task?"
+                            onConfirm={() => handleConfirmDeleteBook(record._id)}
+                            onCancel={cancel}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <FaRegTrashCan style={{ color: ' red', marginRight: '20px' }} />
+                        </Popconfirm>
+
+
+                        <FaPen style={{ color: 'red' }}
+                            onClick={() => {
+                                setDataUpdate(record)
+                                setIsOpenModalUpdateBookDung(true)
+                            }}
+                        />
+                        <FaPen style={{ color: 'green', marginLeft: '20px' }}
+                            onClick={() => {
+                                setDataUpdateBook(record)
+                                setIsOpenModalUpdateBook(true)
+                            }}
+                        />
+                    </>
                 )
             }
         },
@@ -109,6 +165,16 @@ const TableBook = (props) => {
     const [openViewModal, setOpenViewModal] = useState(false)
 
     const [openModalCreate, setOpenModalCreate] = useState(false)
+
+    const [dataUpdateBook, setDataUpdateBook] = useState(null)
+    // 
+    const [dataUpdate, setDataUpdate] = useState({})
+    // 
+    const [dataDeleteBook, setDataDeleteBook] = useState({})
+    const [isOpenModalDeleteBook, setIsOpenModalDeleteBook] = useState(false)
+
+    const [isOpenModalUpdateBook, setIsOpenModalUpdateBook] = useState(false)
+    const [isOpenModalUpdateBookDung, setIsOpenModalUpdateBookDung] = useState(false)
 
     const onChange = (pagination, filters, sorter, extra) => {
         // console.log('params', pagination, filters, sorter, extra);
@@ -216,10 +282,27 @@ const TableBook = (props) => {
                 openModalCreate={openModalCreate}
                 setOpenModalCreate={setOpenModalCreate}
                 fetchListBook={fetchListBook}
+                setCurrentBook={setCurrentBook}
             />
 
             <ModalCreateBook
                 fetchListBook={fetchListBook}
+                setCurrentBook={setCurrentBook}
+            />
+
+            <ModalUpdateBook
+                isModalOpen={isOpenModalUpdateBook}
+                setIsModalOpen={setIsOpenModalUpdateBook}
+                dataUpdateBook={dataUpdateBook}
+                setDataUpdateBook={setDataUpdateBook}
+                fetchListBook={fetchListBook}
+                setCurrentBook={setCurrentBook}
+            />
+
+            <BookModalUpdate
+                openModalUpdate={isOpenModalUpdateBookDung}
+                setOpenModalUpdate={setIsOpenModalUpdateBookDung}
+                dataUpdate={dataUpdate}
             />
         </>
     )

@@ -67,9 +67,20 @@ const postCreateBook = (query) => {
     return axios.post(`/api/v1/book`, query)
 }
 
+const putUpdateBook = (id, mainText, author, price, category, quantity, sold, thumbnail, slider) => {
+    return axios.put(`/api/v1/book/${id}`, {
+        mainText, author, price, category, quantity, sold, thumbnail, slider
+    })
+}
+
+const deleteBook = (id) => {
+    return axios.delete(`/api/v1/book/${id}`)
+}
+
 export {
     postRegister, postLogin, callFetchAccount, postLogout,
     getFetchListUser, postCreateUserAdmin, callBulkCreateUser,
     putUpdateUser, deleteUserAdmin, getListBookWithPaginate,
-    getCategoryBook, callUploadBookImg, postCreateBook
+    getCategoryBook, callUploadBookImg, postCreateBook,
+    putUpdateBook, deleteBook
 }
