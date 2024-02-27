@@ -13,6 +13,7 @@ import { FaPen } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 import ModalUpdateBook from './ModalUpdateBook/ModalUpdateBook';
 import BookModalUpdate from '../../../../BookModalUpdate';
+import * as XLSX from 'xlsx';
 
 const data = [
     {
@@ -122,12 +123,12 @@ const TableBook = (props) => {
                     <>
                         <Popconfirm
                             placement='left'
-                            title="Delete the task"
-                            description="Are you sure to delete this task?"
+                            title="Xóa cuốn sách"
+                            description="Chắc chắn xóa cuốn sách này?"
                             onConfirm={() => handleConfirmDeleteBook(record._id)}
                             onCancel={cancel}
-                            okText="Yes"
-                            cancelText="No"
+                            okText="Xác nhận"
+                            cancelText="Hủy"
                         >
                             <FaRegTrashCan style={{ color: ' red', marginRight: '20px' }} />
                         </Popconfirm>
@@ -183,6 +184,7 @@ const TableBook = (props) => {
         }
         if (pageSizeBook !== pagination.pageSize) {
             setPageSizeBook(pagination.pageSize)
+            setCurrentBook(1)
         }
         if (sorter && sorter.field) {
             const q = sorter.order === "ascend" ? `&sort=${sorter.field}` : `&sort=-${sorter.field}`
@@ -211,6 +213,16 @@ const TableBook = (props) => {
     }
 
     const renderHeaderTableBook = () => {
+
+        const handleExportTableBook = () => {
+            const worksheet = XLSX.utils.json_to_sheet(listBook);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+            //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+            //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+            XLSX.writeFile(workbook, "DataBook.xlsx");
+        }
+
         return (
             <div className='user-table_header'>
                 <h3 className='user-table-header_left'>Table List Book</h3>
@@ -219,18 +231,11 @@ const TableBook = (props) => {
                         className='user-table-header_button'
                         type="primary"
                         icon={<ExportOutlined />}
-                    // onClick={() => handleExportTable()}
+                        onClick={() => handleExportTableBook()}
                     >
                         Export
                     </Button>
-                    <Button
-                        className='user-table-header_button'
-                        type="primary"
-                        icon={<ImportOutlined />}
-                    // onClick={handleOpenModalImport}
-                    >
-                        Import
-                    </Button>
+
                     <Button
                         className='user-table-header_button'
                         type="primary"
