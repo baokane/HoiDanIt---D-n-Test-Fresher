@@ -1,38 +1,45 @@
 import { FilterTwoTone, ReloadOutlined } from '@ant-design/icons';
-import { Row, Col, Form, Checkbox, Divider, InputNumber, Button, Rate, Tabs, Pagination } from 'antd';
+import { Row, Col, Form, Checkbox, Divider, InputNumber, Button, Rate, Tabs, Pagination, Spin } from 'antd';
 import './home.scss';
 import { useEffect, useState } from 'react';
 import { getCategoryBook, getListBookWithPaginate } from '../../services/api';
 const Home = () => {
     const [listCategory, setListCategory] = useState([])
 
+    const [filterBook, setFilterBook] = useState('')
+    const [sortBook, setSortBook] = useState('&sort=-sold')
+
     const [currentBook, setCurrentBook] = useState(1)
     const [pageSizeBook, setPageSizeBook] = useState(5)
     const [totalBook, setTotalBook] = useState(0)
     const [listBook, setListBook] = useState([])
+
+    const [isLoading, setIsloading] = useState(false)
 
     const [form] = Form.useForm();
 
     useEffect(() => {
         fetchListBook()
     }, [currentBook, pageSizeBook,
-        // sortBook, filterBook
+        sortBook, filterBook
     ])
 
     const fetchListBook = async () => {
         let queryBook = `current=${currentBook}&pageSize=${pageSizeBook}`
-        // if (sortBook) {
-        //     queryBook += `${sortBook}`
-        // }
-        // if (filterBook) {
-        //     queryBook += `${filterBook}`
-        // }
+        if (sortBook) {
+            queryBook += `${sortBook}`
+        }
+        if (filterBook) {
+            queryBook += `${filterBook}`
+        }
+        setIsloading(true)
         const res = await getListBookWithPaginate(queryBook)
         console.log('>>> res: ', res)
         if (res && res.data && res.data.result) {
             setListBook(res.data.result)
             setTotalBook(res.data.meta.total)
         }
+        setIsloading(false)
     }
 
     const handleChangeBookHome = (p, s) => {
@@ -47,34 +54,64 @@ const Home = () => {
 
     const handleChangeFilter = (changedValues, values) => {
         console.log(">>> check handleChangeFilter", changedValues, values)
+        if (changedValues && changedValues.category && changedValues.category.length > 0) {
+            const f = changedValues.category.join(',')
+            setFilterBook(`&category=${f}`)
+        }
+        else {
+            setFilterBook('')
+        }
     }
 
     const onFinish = (values) => {
-
+        // console.log('values:', values)
+        console.log('values:', values.category.length)
+        if (values && values?.range) {
+            if (values?.range?.from >= 0 && values?.range?.to >= 0) {
+                let fPrice = `&price>=${values?.range?.from}&price<=${values?.range?.to}`
+                setFilterBook(fPrice)
+            }
+            if (values && values?.category && values?.category?.length) {
+                let fBook = values.category.join(',')
+                setFilterBook(`&category=${fBook}`)
+                console.log('>>> data:', fBook)
+                // fPrice += 
+            }
+            if (values?.range?.from >= 0 && values?.range?.to >= 0 && values?.category?.length) {
+                let fBookAndPrice = ''
+                let fPrice = `&price>=${values?.range?.from}&price<=${values?.range?.to}`
+                let fBook = values.category.join(',')
+                fBookAndPrice += `${fPrice}$category=${fBook}`
+                setFilterBook(fBookAndPrice)
+            }
+        }
     }
 
     const onChange = (key) => {
         console.log(key);
+        if (sortBook !== key) {
+            setSortBook(key)
+        }
     };
 
     const items = [
         {
-            key: '1',
+            key: `&sort=-sold`,
             label: `Phổ biến`,
             children: <></>,
         },
         {
-            key: '2',
+            key: `&sort=-createdAt`,
             label: `Hàng Mới`,
             children: <></>,
         },
         {
-            key: '3',
+            key: `&sort=price`,
             label: `Giá Thấp Đến Cao`,
             children: <></>,
         },
         {
-            key: '4',
+            key: `&sort=-price`,
             label: `Giá Cao Đến Thấp`,
             children: <></>,
         },
@@ -90,7 +127,6 @@ const Home = () => {
 
     }, [])
 
-    console.log('list book:', listBook)
     return (
         <div className="homepage-container" style={{ maxWidth: 1440, margin: '20px auto 0 auto' }}>
             <Row gutter={[20, 20]}>
@@ -183,49 +219,50 @@ const Home = () => {
                         </Form.Item>
                     </Form>
                 </Col>
-                <Col md={20} xs={24} style={{ backgroundColor: '#fff', border: '1px solid #dddde3' }}>
-                    <Row>
-                        <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
-                    </Row>
-                    <Row className='customize-row'>
-                        {listBook && listBook.length > 0 &&
-                            listBook.map((item, index) => {
-                                return (
-                                    <div className="column" key={index}>
-                                        <div className='wrapper'>
-                                            <div className='thumbnail'>
-                                                <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.thumbnail}`} alt="thumbnail book" />
-                                            </div>
-                                            <div className='text'>{item.mainText}</div>
-                                            <div className='price'>
-                                                {item.price}
-                                                {/* {new Int.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(70000)} */}
-                                            </div>
-                                            <div className='rating'>
-                                                <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 10 }} />
-                                                <span>{item.sold}</span>
+                <Col md={20} xs={24} style={{ backgroundColor: '#fff', border: '1px solid #dddde3', borderLeft: 'none' }}>
+                    <Spin tip="Loading..." spinning={isLoading}>
+                        <Row>
+                            <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+                        </Row>
+                        <Row className='customize-row'>
+                            {listBook && listBook.length > 0 &&
+                                listBook.map((item, index) => {
+                                    return (
+                                        <div className="column" key={index}>
+                                            <div className='wrapper'>
+                                                <div className='thumbnail'>
+                                                    <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.thumbnail}`} alt="thumbnail book" />
+                                                </div>
+                                                <div className='text'>{item.mainText}</div>
+                                                <div className='price'>
+                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
+                                                </div>
+                                                <div className='rating'>
+                                                    <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 10 }} />
+                                                    <span>đã bán {item.sold}</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )
-                            })
-                        }
+                                    )
+                                })
+                            }
 
-                    </Row>
-                    <Divider />
-                    <Row style={{ display: "flex", justifyContent: "center" }}>
-                        <Pagination
-                            current={currentBook}
-                            total={totalBook}
-                            pageSize={pageSizeBook}
-                            responsive
-                            onChange={(p, s) => handleChangeBookHome(p, s)}
-                            showSizeChanger={false}
-                        />
-                    </Row>
+                        </Row>
+                        <Divider />
+                        <Row style={{ display: "flex", justifyContent: "center" }}>
+                            <Pagination
+                                current={currentBook}
+                                total={totalBook}
+                                pageSize={pageSizeBook}
+                                responsive
+                                onChange={(p, s) => handleChangeBookHome(p, s)}
+                                showSizeChanger={false}
+                            />
+                        </Row>
+                    </Spin>
                 </Col>
             </Row>
-        </div>
+        </div >
     )
 }
 
