@@ -1,7 +1,10 @@
 // import { useLocation } from "react-router-dom"
 
+import { useState } from "react";
+import ViewDetail from "../../component/Book/ViewDetail";
+
 const BookPage = () => {
-    // Cách 1 dùng useLocation
+    // Cách 1 dùng useLocation:
     // const location = useLocation()
     // const params = new URLSearchParams(location.search)
     // const id = params.get('id')
@@ -10,7 +13,11 @@ const BookPage = () => {
     let id = params.get("id"); // is the string "Jonathan Smith".
     console.log('id:', id)
 
-    return (<h1>Book Page</h1>)
+    return (
+        <>
+            <ViewDetail />
+        </>
+    )
 }
 
 export default BookPage

@@ -163,6 +163,7 @@ const Home = () => {
     const handleRedirectBook = (book) => {
         console.log('book:', book)
         const dataSlug = slug((book.mainText))
+
         nagivate(`/book/${dataSlug}?id=${book._id}`)
     }
 
