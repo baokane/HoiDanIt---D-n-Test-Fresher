@@ -1,8 +1,9 @@
 import { SearchOutlined, ShoppingCartOutlined, UnorderedListOutlined, UserOutlined } from '@ant-design/icons';
 import './header.scss'
 import '../../responsive/index.scss'
+import '../../styles/global.scss'
 import { FaReact } from "react-icons/fa";
-import { Avatar, Badge, Space } from 'antd';
+import { Avatar, Badge, Popover, Space } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { Dropdown } from 'antd';
 import { useState } from 'react';
@@ -16,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 const Header = () => {
     const dispatch = useDispatch()
     const isAuthenticated = useSelector(state => state.account.isAuthenticated)
+    const carts = useSelector(state => state.order.carts)
     const user = useSelector(state => state.account.user)
 
     const items = [
@@ -58,6 +60,26 @@ const Header = () => {
 
     const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`
 
+    const text = <span>Sản phẩm mới thêm</span>;
+    console.log('catrs:', carts)
+
+    const content = () => {
+        return (
+            <div className='pop__main'>
+                {carts && carts.length > 0 && carts.map((item, index) => {
+                    return (
+                        <div className='pop__warapper'>
+                            <img className='pop__img' src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item?.details?.thumbnail}`} alt='anh' />
+                            <div className='pop__name'>{item?.details?.name}</div>
+                            <div className='pop__price'>{item?.details?.price} vnd</div>
+                        </div>
+                    )
+                })}
+                <div className='pop__btn'>Xem giỏ hàng</div>
+            </div>
+        )
+    }
+
     return (
         <header className="header">
 
@@ -81,9 +103,16 @@ const Header = () => {
                 <input className='header-center_input' placeholder='Bạn tìm gì hôm nay' />
             </div>
             <div className="header-right">
-                <Badge count={5} className='header-right_icon'>
-                    <ShoppingCartOutlined className='header-right_icon' />
-                </Badge>
+
+                <Popover placement="bottom" title={text} content={content} className='pop'>
+                    <Badge
+                        count={carts?.length ?? 0}
+                        className='header-right_icon'
+                        showZero
+                    >
+                        <ShoppingCartOutlined className='header-right_icon' />
+                    </Badge>
+                </Popover>
 
                 <Dropdown menu={{ items }} trigger={['click']} className='header-right_dropdown'>
                     <a onClick={(e) => e.preventDefault()}>

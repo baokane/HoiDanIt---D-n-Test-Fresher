@@ -77,10 +77,14 @@ const deleteBook = (id) => {
     return axios.delete(`/api/v1/book/${id}`)
 }
 
+const getBookDetail = (id) => {
+    return axios.get(`/api/v1/book/${id}`)
+}
+
 export {
     postRegister, postLogin, callFetchAccount, postLogout,
     getFetchListUser, postCreateUserAdmin, callBulkCreateUser,
     putUpdateUser, deleteUserAdmin, getListBookWithPaginate,
     getCategoryBook, callUploadBookImg, postCreateBook,
-    putUpdateBook, deleteBook
+    putUpdateBook, deleteBook, getBookDetail
 }
