@@ -19,6 +19,7 @@ const Header = () => {
     const isAuthenticated = useSelector(state => state.account.isAuthenticated)
     const carts = useSelector(state => state.order.carts)
     const user = useSelector(state => state.account.user)
+    const nagivate = useNavigate()
 
     const items = [
         {
@@ -47,7 +48,6 @@ const Header = () => {
     const onClose = () => {
         setOpen(false);
     };
-    const nagivate = useNavigate()
     const handleLogout = async () => {
         const res = await postLogout()
         console.log('ress:', res)
@@ -65,18 +65,21 @@ const Header = () => {
 
     const content = () => {
         return (
-            <div className='pop__main'>
-                {carts && carts.length > 0 && carts.map((item, index) => {
-                    return (
-                        <div className='pop__warapper'>
-                            <img className='pop__img' src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item?.details?.thumbnail}`} alt='anh' />
-                            <div className='pop__name'>{item?.details?.name}</div>
-                            <div className='pop__price'>{item?.details?.price} vnd</div>
-                        </div>
-                    )
-                })}
-                <div className='pop__btn'>Xem giỏ hàng</div>
+            <div className='pop__layout'>
+                <div className='pop__main'>
+                    {carts && carts.length > 0 && carts.map((item, index) => {
+                        return (
+                            <div className='pop__warapper' key={`book-${index}`}>
+                                <img className='pop__img' src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item?.details?.thumbnail}`} alt='anh' />
+                                <div className='pop__name'>{item?.details?.mainText}</div>
+                                <div className='pop__price'>{item?.details?.price} vnd</div>
+                            </div>
+                        )
+                    })}
+                </div>
+                <div className='pop__btn' onClick={() => nagivate('/order')}>Xem giỏ hàng</div>
             </div>
+
         )
     }
 
@@ -104,7 +107,7 @@ const Header = () => {
             </div>
             <div className="header-right">
 
-                <Popover placement="bottom" title={text} content={content} className='pop'>
+                <Popover placement="bottom" title={text} content={content} className='pop' >
                     <Badge
                         count={carts?.length ?? 0}
                         className='header-right_icon'
