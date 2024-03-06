@@ -46,15 +46,19 @@ const LayoutAdmin = () => {
             key: '0',
         },
         {
-            label: <span onClick={() => handleLogoutAdmin()}>Đăng xuất</span>,
+            label: <span onClick={() => nagivate('/history')}>Lịch sử mua hàng</span>,
             key: '1',
+        },
+        {
+            label: <span onClick={() => handleLogoutAdmin()}>Đăng xuất</span>,
+            key: '2',
         },
     ];
 
     if (user.role === 'ADMIN') {
         items.unshift({
             label: <span onClick={() => nagivate('/')}>Trang chủ</span>,
-            key: '2',
+            key: '3',
         },)
     }
 

@@ -191,6 +191,7 @@ const UserTable = () => {
             query += `${sortQuery}`
         }
         const res = await getFetchListUser(query)
+        console.log('user:', res)
         if (res && res.data) {
             setListUser(res.data.result)
             setTotal(res.data.meta.total)

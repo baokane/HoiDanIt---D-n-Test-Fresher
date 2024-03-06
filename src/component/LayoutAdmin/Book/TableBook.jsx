@@ -88,7 +88,6 @@ const TableBook = (props) => {
             title: 'Ngày cập nhật',
             dataIndex: 'updatedAt',
             sorter: true,
-
             render: (updatedAt) => { return (<p>{moment(updatedAt).format("DD-MM-YYYY HH:mm:ss")}</p>) },
         },
         {

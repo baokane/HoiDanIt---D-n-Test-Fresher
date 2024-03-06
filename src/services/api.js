@@ -81,10 +81,25 @@ const getBookDetail = (id) => {
     return axios.get(`/api/v1/book/${id}`)
 }
 
+const callPlaceOrder = (name, address, phone, totalPrice, detail) => {
+    return axios.post(`/api/v1/order`, {
+        name,
+        address,
+        phone,
+        totalPrice,
+        detail
+    })
+}
+
+const getOrderHistory = () => {
+    return axios.get('/api/v1/history')
+}
+
 export {
     postRegister, postLogin, callFetchAccount, postLogout,
     getFetchListUser, postCreateUserAdmin, callBulkCreateUser,
     putUpdateUser, deleteUserAdmin, getListBookWithPaginate,
     getCategoryBook, callUploadBookImg, postCreateBook,
-    putUpdateBook, deleteBook, getBookDetail
+    putUpdateBook, deleteBook, getBookDetail, callPlaceOrder,
+    getOrderHistory
 }

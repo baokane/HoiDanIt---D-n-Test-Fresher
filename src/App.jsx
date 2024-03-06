@@ -24,6 +24,7 @@ import UserTable from './component/LayoutAdmin/User/UserTable'
 import TableBook from './component/LayoutAdmin/Book/TableBook';
 import ViewOrder from './component/Order/ViewOrder';
 import './styles/reset.scss'
+import OrderHistory from './component/OrderHistory';
 // xoa het test redux
 
 const Layout = () => {
@@ -91,6 +92,10 @@ export default function App() {
         {
           path: "/order",
           element: <ViewOrder />,
+        },
+        {
+          path: "/history",
+          element: <OrderHistory />,
         },
       ],
     },

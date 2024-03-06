@@ -1,10 +1,11 @@
-import { Col, Divider, Empty, InputNumber, Row, Steps } from 'antd';
+import { Col, Divider, Empty, InputNumber, Row, Steps, Button, Result } from 'antd';
 import './order.scss';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, SmileOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { doDeleteBookAction, doUpdateBookAction } from '../../redux/order/orderSlice';
 import { useEffect, useState } from 'react';
 import Payment from '../Payment';
+import { useNavigate } from 'react-router-dom';
 
 const ViewOrder = (props) => {
     const carts = useSelector(state => state.order.carts)
@@ -13,9 +14,10 @@ const ViewOrder = (props) => {
     const [currentSteps, setCurrentSteps] = useState(0)
 
     const dispatch = useDispatch()
+
+    const nagivate = useNavigate()
     console.log('carts:', carts)
     const handleChangeInput = (value, book) => {
-        console.log('book:', book)
         if (!value || value < 1 || value > book.details.quantity) return
         if (!isNaN(value)) {
             dispatch(doUpdateBookAction({
@@ -86,7 +88,7 @@ const ViewOrder = (props) => {
                                                     <InputNumber onChange={(value) => handleChangeInput(value, book)} value={book.quantity} />
                                                 </div>
                                                 <div className='sum' >
-                                                    Tổng: {book.quantity * book?.details?.price}
+                                                    Tổng: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.quantity * book?.details?.price)}
                                                 </div>
                                                 <DeleteOutlined onClick={() => handleDeleteBook(book)} />
                                             </div>
@@ -145,7 +147,7 @@ const ViewOrder = (props) => {
                                                         <InputNumber onChange={(value) => handleChangeInput(value, book)} value={book.quantity} />
                                                     </div>
                                                     <div className='sum' >
-                                                        Tổng: {book.quantity * book?.details?.price}
+                                                        Tổng: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.quantity * book?.details?.price)}
                                                     </div>
                                                     <DeleteOutlined onClick={() => handleDeleteBook(book)} />
                                                 </div>
@@ -162,7 +164,10 @@ const ViewOrder = (props) => {
                                     }
                                 </Col>
                                 <Col md={6} xs={24}>
-                                    <Payment />
+                                    <Payment
+                                        totalPrice={totalPrice}
+                                        setCurrentSteps={setCurrentSteps}
+                                    />
                                 </Col>
                             </Row>
                         </div>
@@ -178,6 +183,13 @@ const ViewOrder = (props) => {
                     }
 
                 </>
+            }
+            {currentSteps === 2 &&
+                <Result
+                    icon={<SmileOutlined />}
+                    title="Bạn đã đặt hàng thành công!"
+                    extra={<Button type="primary" onClick={() => nagivate('/history')}>Xem lịch sử</Button>}
+                />
             }
         </div>
     )

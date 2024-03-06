@@ -7,6 +7,36 @@
     }
 
     .form-item__address {
-        padding-bottom: 70px;
+        padding-bottom: 10px;
+    }
+
+    .form__text {
+        margin-top: 20px;
+    }
+
+    .form__icon {
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+
+    .form-text__total {
+        margin: 25px 0;
+    }
+
+    .form__button {
+        margin-top: 15px;
+        background-color: #ee4d2d;
+        color: #fff;
+        border: 1px solid #ee4d2d;
+        box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.03);
+        cursor: pointer;
+        border-radius: 3px;
+        font-size: 16px;
+        height: 40px;
+        padding: 0 134px;
+
+        &:hover {
+            background-color: #c43e23;
+        }
     }
 }

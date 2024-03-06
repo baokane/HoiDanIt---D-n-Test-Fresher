@@ -1,20 +1,11 @@
-.header-right_icon:hover~.pop {
-    display: block;
-}
-
 .header-right_icon {
     position: relative;
-}
-
-.pop {
-    position: absolute;
-    margin-right: 200px;
-
+    max-height: 400px;
 }
 
 .pop__layout {
     width: 487px;
-    height: 324px;
+    max-height: 324px;
 
     .pop__main {
         cursor: pointer;
@@ -53,7 +44,6 @@
 
     .pop__btn {
         cursor: pointer;
-        position: absolute;
         padding: 0 20px;
         background-color: #ee4d2d;
         font-size: 16px;

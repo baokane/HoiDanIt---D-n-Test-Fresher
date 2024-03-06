@@ -51,7 +51,6 @@ const BookPage = () => {
         return items
     }
 
-
     return (
         <>
             <ViewDetail
