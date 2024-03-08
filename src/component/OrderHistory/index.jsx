@@ -3,6 +3,7 @@ import { Table, Tag } from 'antd';
 import { getOrderHistory } from '../../services/api';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import ReactJson from 'react-json-view';
 
 
 
@@ -33,9 +34,7 @@ import moment from 'moment';
 //     },
 // ];
 
-const onChange = (pagination, filters, sorter, extra) => {
-    console.log('params', pagination, filters, sorter, extra);
-};
+
 
 const OrderHistory = () => {
 
@@ -71,6 +70,19 @@ const OrderHistory = () => {
         {
             title: 'Chi tiết',
             dataIndex: 'phone',
+            render: (text, record,) => {
+                console.log('text:', text, 'record:', record)
+                const details = record.detail.map(item => {
+                    return ({
+                        bookName: item.bookName,
+                        quantity: item.quantity,
+                        _id: item._id
+                    })
+                })
+                return (
+                    <ReactJson src={details} name={'Chi tiết đơn mua'} displayDataTypes={false} />
+                )
+            }
         },
     ];
     useEffect(() => {
@@ -83,8 +95,12 @@ const OrderHistory = () => {
         setListOrderHistory(res.data)
     }
 
+    const onChange = (pagination, filters, sorter, extra) => {
+        console.log('params', pagination, filters, sorter, extra);
+    };
+
     return (
-        <Table rowKey='_id' columns={columns} dataSource={listOrderHistory} onChange={onChange} />
+        <Table rowKey='_id' columns={columns} dataSource={listOrderHistory} onChange={onChange} pagination={false} />
     )
 };
 

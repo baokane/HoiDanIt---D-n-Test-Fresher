@@ -13,6 +13,7 @@ import { postLogout } from '../../services/api';
 import { message } from 'antd';
 import { doLogoutAction } from '../../redux/account/accountSlide';
 import { useNavigate } from 'react-router-dom';
+import ManageAccount from '../ManageAccount.jsx/ManageAccount';
 
 const Header = () => {
     const dispatch = useDispatch()
@@ -20,10 +21,11 @@ const Header = () => {
     const carts = useSelector(state => state.order.carts)
     const user = useSelector(state => state.account.user)
     const nagivate = useNavigate()
+    const [isOpenManageAccount, setIsOpenManageAccount] = useState(false)
 
     const items = [
         {
-            label: <span>Quản lý tài khoản</span>,
+            label: <span onClick={() => setIsOpenManageAccount(true)}>Quản lý tài khoản</span>,
             key: '0',
         },
         {
@@ -139,6 +141,10 @@ const Header = () => {
                     </a>
                 </Dropdown>
             </div>
+            <ManageAccount
+                isModalOpen={isOpenManageAccount}
+                setIsModalOpen={setIsOpenManageAccount}
+            />
         </header>
     )
 }

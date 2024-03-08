@@ -288,9 +288,10 @@ const UserTable = () => {
                 onChange={onChange}
                 rowKey='_id'
                 pagination={{
-                    current: current, pageSize: pageSize,
-                    showSizeChanger: true,
+                    current: current,
+                    pageSize: pageSize,
                     total: total,
+                    showSizeChanger: true,
                     showTotal: (total, range) => {
                         return <div>{range[0]}-{range[1]} trên {total} rows</div>
                     }

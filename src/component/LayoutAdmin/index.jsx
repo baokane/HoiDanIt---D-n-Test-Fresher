@@ -78,7 +78,7 @@ const LayoutAdmin = () => {
                                 key: '1',
                                 icon: <UserOutlined />,
                                 label: 'Dashboard',
-
+                                onClick: () => { nagivate('dashboard') }
                             },
                             {
                                 key: '2',
@@ -104,6 +104,7 @@ const LayoutAdmin = () => {
                                 key: '4',
                                 icon: <UploadOutlined />,
                                 label: 'Manage Orders',
+                                onClick: () => { nagivate('/admin/order') }
                             },
                         ]}
                     />

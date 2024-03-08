@@ -25,6 +25,7 @@ import TableBook from './component/LayoutAdmin/Book/TableBook';
 import ViewOrder from './component/Order/ViewOrder';
 import './styles/reset.scss'
 import OrderHistory from './component/OrderHistory';
+import ManageOrder from './component/ManageOrder';
 // xoa het test redux
 
 const Layout = () => {
@@ -120,10 +121,6 @@ export default function App() {
           path: "dashboard",
           element: <DashBoard />,
         },
-        // {
-        //   path: "book",
-        //   element: <BookPage />,
-        // },
         {
           path: "/admin/user",
           element: <UserTable />,
@@ -131,6 +128,10 @@ export default function App() {
         {
           path: "/admin/book",
           element: <TableBook />,
+        },
+        {
+          path: "/admin/order",
+          element: <ManageOrder />,
         },
       ],
     },

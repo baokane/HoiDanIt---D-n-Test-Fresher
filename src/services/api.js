@@ -95,11 +95,45 @@ const getOrderHistory = () => {
     return axios.get('/api/v1/history')
 }
 
+const callUpdateAvatar = (fileImg) => {
+    const bodyFormData = new FormData();
+    bodyFormData.append('fileImg', fileImg);
+    return axios({
+        method: 'post',
+        url: '/api/v1/file/upload',
+        data: bodyFormData,
+        headers: {
+            "Content-Type": "multipart/form-data",
+            "upload-type": "avatar"
+        },
+    });
+}
+
+const callUpdateUserInfo = (id, fullName, phone, avatar) => {
+    return axios.put('/api/v1/user', {
+        _id: id, fullName, phone, avatar
+    })
+}
+
+const callUpdatePassword = (email, oldpass, newpass) => {
+    return axios.post('/api/v1/user/change-password', {
+        email, oldpass, newpass
+    })
+}
+
+const callDashBoard = () => {
+    return axios.get('/api/v1/database/dashboard')
+}
+
+const callManageOrder = (query) => {
+    return axios.get(`/api/v1/order?${query}`)
+}
 export {
     postRegister, postLogin, callFetchAccount, postLogout,
     getFetchListUser, postCreateUserAdmin, callBulkCreateUser,
     putUpdateUser, deleteUserAdmin, getListBookWithPaginate,
     getCategoryBook, callUploadBookImg, postCreateBook,
     putUpdateBook, deleteBook, getBookDetail, callPlaceOrder,
-    getOrderHistory
+    getOrderHistory, callUpdateAvatar, callUpdateUserInfo,
+    callUpdatePassword, callDashBoard, callManageOrder
 }

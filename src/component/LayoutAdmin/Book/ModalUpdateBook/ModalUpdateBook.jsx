@@ -100,6 +100,7 @@ const ModalUpdateBook = (props) => {
                 slider: { fileList: arrSlider }
             }
             setInitForm(init);
+            console.log(';init', init)
             form.setFieldsValue(init);
             setDataThumbnail(init?.thumbnail?.fileList)
             setImageSlider(init?.slider?.fileList)

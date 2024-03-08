@@ -51,7 +51,7 @@ const TableBook = (props) => {
             dataIndex: '_id',
             sorter: true,
             render: (text, record, index) => {
-                // console.log('record:', record)
+                console.log('record:', record)
                 return (
                     <a
                         onClick={() => {
@@ -60,7 +60,8 @@ const TableBook = (props) => {
                             setOpenViewModal(true)
                         }}
                     >
-                        {record._id}</a>
+                        {record._id}
+                    </a>
                 )
             }
         },
