@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './layoutadmin.scss';
 import '../../responsive/index.scss'
 import {
@@ -29,6 +29,21 @@ const LayoutAdmin = () => {
     const nagivate = useNavigate()
     const isAuthenticated = useSelector(state => state.account.isAuthenticated)
     const user = useSelector(state => state.account.user)
+    const [activeMenu, setActiveMenu] = useState('Dashboard')
+    useEffect(() => {
+        if (window.location.pathname.includes('/book')) {
+            setActiveMenu('Manage Books')
+        }
+        if (window.location.pathname.includes('/dashboard')) {
+            setActiveMenu('Dashboard')
+        }
+        if (window.location.pathname.includes('/user')) {
+            setActiveMenu('User')
+        }
+        if (window.location.pathname.includes('/order')) {
+            setActiveMenu('Manage Orders')
+        }
+    }, [])
 
     const handleLogoutAdmin = async () => {
         const res = await postLogout()
@@ -72,22 +87,26 @@ const LayoutAdmin = () => {
                     <Menu
                         theme="dark"
                         mode="inline"
-                        defaultSelectedKeys={['1']}
+                        selectedKeys={[activeMenu]}
+                        onClick={(e) => {
+                            console.log('key', e)
+                            setActiveMenu(e.key)
+                        }}
                         items={[
                             {
-                                key: '1',
+                                key: 'Dashboard',
                                 icon: <UserOutlined />,
                                 label: 'Dashboard',
                                 onClick: () => { nagivate('dashboard') }
                             },
                             {
-                                key: '2',
+                                key: 'Manage Users',
                                 icon: <VideoCameraOutlined />,
                                 label: 'Manage Users',
 
                                 children: [
                                     {
-                                        key: '5',
+                                        key: 'User',
                                         icon: <UploadOutlined />,
                                         label: 'CRUD',
                                         onClick: () => { nagivate('user') }
@@ -95,13 +114,13 @@ const LayoutAdmin = () => {
                                 ]
                             },
                             {
-                                key: '3',
+                                key: 'Manage Books',
                                 icon: <UploadOutlined />,
                                 label: 'Manage Books',
                                 onClick: () => { nagivate('book') }
                             },
                             {
-                                key: '4',
+                                key: 'Manage Orders',
                                 icon: <UploadOutlined />,
                                 label: 'Manage Orders',
                                 onClick: () => { nagivate('/admin/order') }
@@ -150,7 +169,9 @@ const LayoutAdmin = () => {
                             margin: '0'
                         }}
                     >
+
                         <Outlet />
+
                     </Content>
                 </Layout>
             </Layout>

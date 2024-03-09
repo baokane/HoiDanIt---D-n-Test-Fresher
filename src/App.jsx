@@ -29,10 +29,11 @@ import ManageOrder from './component/ManageOrder';
 // xoa het test redux
 
 const Layout = () => {
+  const [searchTerm, setSearchTerm] = useState(1)
   return (
     <div className='layout-app'>
-      <Header />
-      <Outlet />
+      <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      <Outlet context={[searchTerm, setSearchTerm]} />
       <Footer />
     </div>
   )
@@ -92,11 +93,17 @@ export default function App() {
         },
         {
           path: "/order",
-          element: <ViewOrder />,
+          element:
+            <ProtectedRoute>
+              <ViewOrder />
+            </ProtectedRoute>
         },
         {
           path: "/history",
-          element: <OrderHistory />,
+          element:
+            <ProtectedRoute>
+              <OrderHistory />
+            </ProtectedRoute>
         },
       ],
     },

@@ -3,7 +3,7 @@ import { Row, Col, Form, Checkbox, Divider, InputNumber, Button, Rate, Tabs, Pag
 import './home.scss';
 import { useEffect, useState } from 'react';
 import { getCategoryBook, getListBookWithPaginate } from '../../services/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 const Home = () => {
     const [listCategory, setListCategory] = useState([])
 
@@ -17,6 +17,9 @@ const Home = () => {
 
     const [isLoading, setIsloading] = useState(false)
 
+    const [searchTerm, setSearchTerm] = useOutletContext('');
+    console.log('searchTerm', searchTerm)
+
     const nagivate = useNavigate()
 
     const [form] = Form.useForm();
@@ -24,7 +27,7 @@ const Home = () => {
     useEffect(() => {
         fetchListBook()
     }, [currentBook, pageSizeBook,
-        sortBook, filterBook
+        sortBook, filterBook, searchTerm
     ])
 
     const fetchListBook = async () => {
@@ -34,6 +37,9 @@ const Home = () => {
         }
         if (filterBook) {
             queryBook += `${filterBook}`
+        }
+        if (searchTerm) {
+            queryBook += `&mainText=/${searchTerm}/i`
         }
         setIsloading(true)
         const res = await getListBookWithPaginate(queryBook)
@@ -173,7 +179,11 @@ const Home = () => {
                 <Col md={4} sm={0} xs={0} style={{ backgroundColor: '#fff', border: '1px solid #dddde3' }}>
                     <div style={{ display: 'flex', justifyContent: "space-between" }}>
                         <span> <FilterTwoTone /> Bộ lọc tìm kiếm</span>
-                        <ReloadOutlined title="Reset" onClick={() => form.resetFields()} />
+                        <ReloadOutlined title="Reset" onClick={() => {
+                            form.resetFields()
+                            setSearchTerm('')
+                        }}
+                        />
                     </div>
                     <Form
                         onFinish={onFinish}

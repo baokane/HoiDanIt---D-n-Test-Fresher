@@ -15,7 +15,10 @@ import { doLogoutAction } from '../../redux/account/accountSlide';
 import { useNavigate } from 'react-router-dom';
 import ManageAccount from '../ManageAccount.jsx/ManageAccount';
 
-const Header = () => {
+const Header = (props) => {
+
+    const { searchTerm, setSearchTerm } = props
+
     const dispatch = useDispatch()
     const isAuthenticated = useSelector(state => state.account.isAuthenticated)
     const carts = useSelector(state => state.order.carts)
@@ -110,7 +113,12 @@ const Header = () => {
             </div>
             <div className="header-center">
                 <SearchOutlined className='header-center_icon' />
-                <input className='header-center_input' placeholder='Bạn tìm gì hôm nay' />
+                <input
+                    className='header-center_input'
+                    placeholder='Bạn tìm gì hôm nay'
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    value={searchTerm}
+                />
             </div>
             <div className="header-right">
 
