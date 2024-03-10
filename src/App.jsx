@@ -29,7 +29,7 @@ import ManageOrder from './component/ManageOrder';
 // xoa het test redux
 
 const Layout = () => {
-  const [searchTerm, setSearchTerm] = useState(1)
+  const [searchTerm, setSearchTerm] = useState('')
   return (
     <div className='layout-app'>
       <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
